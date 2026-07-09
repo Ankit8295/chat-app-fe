@@ -1,0 +1,36 @@
+@utility vertical-center {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+@utility warning-style {
+  background: var(--color-warning-bg);
+  color: var(--color-warning-text);
+  border: 2px solid var(--color-warning-border);
+}
+
+@utility error-style {
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+  border: 2px solid var(--color-error-border);
+}
+
+@utility info-style {
+  background: var(--color-info-bg);
+  color: var(--color-info-text);
+  border: 2px solid var(--color-info-border);
+}
+
+@utility success-style {
+  background: var(--color-success-bg);
+  color: var(--color-success-text);
+  border: 2px solid var(--color-success-border);
+}
+
+@utility horizontal-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
