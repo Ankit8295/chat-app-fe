@@ -1,9 +1,6 @@
 "use client";
-import { ApiFormError, login } from "@/features/auth/auth-api";
-import {
-  createLoginFormSchema,
-  LoginFormState,
-} from "@/lib/validations/auth";
+import { ApiFormError, login } from "@/lib/api/auth/auth";
+import { createLoginFormSchema, LoginFormState } from "@/lib/validations/auth";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
@@ -54,11 +51,13 @@ export default function LoginForm() {
   }
 
   const errorMessage =
-    state?.message &&
-    (t.has(state.message) ? t(state.message) : state.message);
+    state?.message && (t.has(state.message) ? t(state.message) : state.message);
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto flex w-full flex-col gap-5 p-5">
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto flex w-full flex-col gap-5 p-5"
+    >
       <div className="text-center">
         <Typography variant="h1">{t("label-login-form-title")}</Typography>
         <Typography variant="p" className="mt-2 text-muted">
@@ -99,11 +98,7 @@ export default function LoginForm() {
         </Typography>
       )}
 
-      <Button
-        type="submit"
-        color="primary"
-        disabled={loginMutation.isPending}
-      >
+      <Button type="submit" color="primary" disabled={loginMutation.isPending}>
         {t("label-login")}
       </Button>
     </form>

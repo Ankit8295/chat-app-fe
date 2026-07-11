@@ -1,5 +1,5 @@
 "use client";
-import { ApiFormError, register } from "@/features/auth/auth-api";
+import { ApiFormError, register } from "@/lib/api/auth/auth";
 import {
   createRegisterFormSchema,
   RegisterFormState,
@@ -55,11 +55,13 @@ export default function RegisterForm() {
   }
 
   const errorMessage =
-    state?.message &&
-    (t.has(state.message) ? t(state.message) : state.message);
+    state?.message && (t.has(state.message) ? t(state.message) : state.message);
 
   return (
-    <form onSubmit={handleSubmit} className="mx-auto flex w-full flex-col gap-5 p-5">
+    <form
+      onSubmit={handleSubmit}
+      className="mx-auto flex w-full flex-col gap-5 p-5"
+    >
       <div className="text-center">
         <Typography variant="h1">{t("label-register-title")}</Typography>
         <Typography variant="p" className="mt-2 text-muted">
