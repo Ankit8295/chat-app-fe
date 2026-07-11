@@ -9,7 +9,7 @@ export default function AddIcon(props: ComponentProps<'svg'>) {
           <g>
             <line
               fill="none"
-              stroke="#000000"
+              stroke="currentColor"
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth="2"
@@ -21,7 +21,7 @@ export default function AddIcon(props: ComponentProps<'svg'>) {
 
             <line
               fill="none"
-              stroke="#000000"
+              stroke="currentColor"
               strokeLinecap="round"
               strokeLinejoin="round"
               strokeWidth="2"

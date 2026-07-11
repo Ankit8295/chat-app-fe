@@ -25,6 +25,7 @@
   --color-error: var(--color-error);
   --color-disable-bg: var(--color-disable-bg);
   --color-disable-text: var(--color-disable-text);
+  --color-success-text: var(--color-success-text);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }

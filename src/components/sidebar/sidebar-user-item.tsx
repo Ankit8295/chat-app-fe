@@ -1,0 +1,90 @@
+"use client";
+
+import { cn } from "../../../cn.config";
+import type { User } from "@/lib/api/users/users";
+
+type Props = {
+  user: User;
+  isActive?: boolean;
+  isExpanded?: boolean;
+  isOnline?: boolean;
+  onClick?: () => void;
+};
+
+function getInitials(name: string) {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+export default function SidebarUserItem({
+  user,
+  isActive = false,
+  isExpanded = false,
+  isOnline = false,
+  onClick,
+}: Props) {
+  const initials = getInitials(user.name || user.email);
+
+  return (
+    <button
+      type="button"
+      title={user.name}
+      onClick={onClick}
+      className={cn(
+        "group relative flex w-full px-2 shrink-0 items-center justify-start gap-3 rounded-lg rounded-tl-none rounded-bl-none outline-none cursor-pointer",
+        isActive && "bg-secondary ",
+      )}
+    >
+      <span
+        aria-hidden
+        className={cn(
+          "absolute left-0 top-1/2 -translate-y-1/2 w-1 rounded-r-full bg-primary transition-all duration-200",
+          isActive
+            ? "h-full opacity-100"
+            : "h-0 opacity-0 group-hover:h-[50%] group-hover:opacity-100",
+        )}
+      />
+
+      <span className="relative shrink-0">
+        <span
+          className={cn(
+            "flex size-12 items-center hover:text-primary rounded-full justify-center overflow-hidden bg-secondary text-sm font-semibold text-foreground transition-[border-radius] duration-200 ",
+            isActive && "text-primary",
+          )}
+        >
+          {user.img ? (
+            <img
+              src={user.img}
+              alt={user.name}
+              className="size-full object-cover"
+            />
+          ) : (
+            initials
+          )}
+        </span>
+
+        {isOnline && (
+          <span
+            aria-label="Online"
+            className="absolute right-0 bottom-0 size-3 rounded-full border-2 border-surface bg-success-text"
+          />
+        )}
+      </span>
+
+      {isExpanded && (
+        <span
+          className={cn(
+            "min-w-0 flex-1 truncate text-left text-sm font-medium text-foreground",
+            isActive && "text-primary",
+          )}
+        >
+          {user.name}
+        </span>
+      )}
+    </button>
+  );
+}

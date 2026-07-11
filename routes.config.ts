@@ -4,6 +4,8 @@ export type IRoutes = {
   LOGIN: string;
   SIGNUP: string;
   SETTINGS: string;
+  CHAT: (id: String) => string;
+  GROUP_CHAT: (id: String) => string;
 };
 
 export const ROUTES: IRoutes = {
@@ -15,4 +17,7 @@ export const ROUTES: IRoutes = {
   SIGNUP: "/signup",
 
   SETTINGS: "/settings",
+
+  CHAT: (id) => `/user/${id}`,
+  GROUP_CHAT: (id) => `/group/${id}`,
 };
