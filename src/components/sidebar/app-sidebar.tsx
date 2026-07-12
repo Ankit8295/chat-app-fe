@@ -1,14 +1,13 @@
 "use client";
 
 import SidebarUserList from "./sidebar-user-list";
-import { useGetAllUsers } from "@/hooks/queries/users";
-
+import { useGetAllFriends } from "@/lib/queries/user/query";
 type Props = {
   isExpanded: boolean;
 };
 
 export default function AppSidebar({ isExpanded }: Props) {
-  const { data: friends = [], isLoading } = useGetAllUsers();
+  const { data: friends = [], isLoading } = useGetAllFriends();
 
   return (
     <div className="flex h-full w-full flex-col items-start gap-2">

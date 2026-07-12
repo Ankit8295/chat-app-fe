@@ -1,28 +1,6 @@
 import { API_ROUTES } from "@/lib/api/api-routes";
 import { axiosClient } from "@/lib/api/axios-client";
-import { normalizeApiFormError } from "@/lib/api/api-errors";
-
-export type { ApiFormError } from "@/lib/api/api-errors";
-
-export type AuthResponse = {
-  expiresInSeconds: number;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-  };
-};
-
-export type RegisterPayload = {
-  name: string;
-  email: string;
-  password: string;
-};
-
-export type LoginPayload = {
-  email: string;
-  password: string;
-};
+import { AuthResponse, LoginPayload, RegisterPayload } from "./types";
 
 export async function register(payload: RegisterPayload) {
   try {
@@ -37,7 +15,8 @@ export async function register(payload: RegisterPayload) {
 
     return response.data;
   } catch (error) {
-    throw normalizeApiFormError(error, "error-authentication-failed");
+    console.error("error", error);
+    throw new Error("something went wrong");
   }
 }
 
@@ -50,6 +29,7 @@ export async function login(payload: LoginPayload) {
 
     return response.data;
   } catch (error) {
-    throw normalizeApiFormError(error, "error-authentication-failed");
+    console.error("error", error);
+    throw new Error("something went wrong");
   }
 }

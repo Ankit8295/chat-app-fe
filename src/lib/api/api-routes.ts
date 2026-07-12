@@ -5,8 +5,8 @@ export const API_ROUTES = {
     logout: "/api/v1/auth/logout",
   },
   users: {
-    getAllUsers: "/api/v1/users",
-    getUserById: (userId: string) => `/api/v1/users/${userId}`,
+    getAllFriends: "/api/v1/users",
+    getFriendById: (userId: string) => `/api/v1/users/${userId}`,
   },
 } as const;
 

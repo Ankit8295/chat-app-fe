@@ -1,7 +1,7 @@
 "use client";
 
+import { User } from "@/lib/queries/user/types";
 import { cn } from "../../../cn.config";
-import type { User } from "@/lib/api/users/users";
 
 type Props = {
   user: User;

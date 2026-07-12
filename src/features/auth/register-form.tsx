@@ -1,9 +1,9 @@
 "use client";
-import { ApiFormError, register } from "@/lib/api/auth/auth";
+import { ApiFormError, register } from "@/lib/queries/auth/api";
 import {
   createRegisterFormSchema,
   RegisterFormState,
-} from "@/lib/validations/auth";
+} from "@/lib/queries/auth/validations";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";

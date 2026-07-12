@@ -1,6 +1,9 @@
 "use client";
-import { ApiFormError, login } from "@/lib/api/auth/auth";
-import { createLoginFormSchema, LoginFormState } from "@/lib/validations/auth";
+import { ApiFormError, login } from "@/lib/queries/auth/api";
+import {
+  createLoginFormSchema,
+  LoginFormState,
+} from "@/lib/queries/auth/validations";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";

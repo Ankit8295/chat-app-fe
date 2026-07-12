@@ -1,12 +1,12 @@
 "use client";
 
-import type { User } from "@/lib/api/users/users";
 import SidebarAddFriend from "./sidebar-add-friend";
 import SidebarUserItem from "./sidebar-user-item";
 import { useLayoutStore } from "@/store/store";
 import { useParams, useRouter } from "next/navigation";
 import { ROUTES } from "../../../routes.config";
 import { useEffect } from "react";
+import { User } from "@/lib/queries/user/types";
 
 type Props = {
   users: User[];
