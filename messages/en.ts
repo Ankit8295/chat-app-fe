@@ -31,6 +31,14 @@ const messages = {
   // Auth — errors
   "error-backend-unavailable": "Server error",
   "error-authentication-failed": "Authentication failed. Please try again.",
+  "error-fetch-users-failed": "Failed to load users. Please try again.",
+  "error-fetch-user-failed": "Failed to load user. Please try again.",
+
+  // Users
+  "label-users-title": "Users",
+  "label-users-description": "People on BuzzTown",
+  "label-users-loading": "Loading users...",
+  "label-users-empty": "No users found.",
 
   // General — pages & errors
   "label-not-found": "Not Found",
