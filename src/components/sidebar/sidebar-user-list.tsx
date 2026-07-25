@@ -1,21 +1,20 @@
 "use client";
 
-import SidebarAddFriend from "./sidebar-add-friend";
 import SidebarUserItem from "./sidebar-user-item";
 import { useLayoutStore } from "@/store/store";
 import { useParams, useRouter } from "next/navigation";
 import { ROUTES } from "../../../routes.config";
 import { useEffect } from "react";
-import { User } from "@/lib/queries/user/types";
+import { Conversation } from "@/lib/queries/user/types";
 
 type Props = {
-  users: User[];
+  conversations: Conversation[];
   isExpanded: boolean;
   isLoading?: boolean;
 };
 
 export default function SidebarUserList({
-  users,
+  conversations,
   isExpanded,
   isLoading = false,
 }: Props) {
@@ -24,30 +23,33 @@ export default function SidebarUserList({
   const activeUserId = useLayoutStore((state) => state.activeUserId);
   const setActiveUserId = useLayoutStore((state) => state.setActiveUserId);
 
-  const onUserClick = (user: User) => {
-    setActiveUserId(user.id);
-    router.push(ROUTES.CHAT(user.id));
+  const onConversationClick = (conversation: Conversation) => {
+    setActiveUserId(conversation.id);
+    router.push(ROUTES.CHAT(conversation.id));
   };
 
   useEffect(() => {
-    const userId = params?.id;
-    if (userId) {
-      setActiveUserId(userId);
+    const id = params?.id;
+    if (id) {
+      setActiveUserId(id);
     }
-  }, []);
+  }, [params?.id, setActiveUserId]);
 
   return (
     <div className="flex w-full flex-1 flex-col items-center gap-2 overflow-y-auto pt-2">
-      <SidebarAddFriend isExpanded={isExpanded} />
-
       {!isLoading &&
-        users.map((user) => (
+        conversations.map((conv) => (
           <SidebarUserItem
-            key={user.id}
-            user={user}
+            key={conv.id}
+            user={{
+              id: conv.id,
+              name: conv.name || "Conversation",
+              email: "",
+              img: conv.image,
+            }}
             isExpanded={isExpanded}
-            isActive={user.id === activeUserId}
-            onClick={() => onUserClick(user)}
+            isActive={conv.id === activeUserId}
+            onClick={() => onConversationClick(conv)}
           />
         ))}
     </div>

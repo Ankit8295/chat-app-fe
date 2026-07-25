@@ -1,16 +1,16 @@
 "use client";
 
 import React from "react";
-import { useGetAllFriends } from "@/lib/queries/user/query";
+import { useGetFriendsOnly } from "@/lib/queries/user/query";
 import { useTranslations } from "next-intl";
 import Typography from "@/components/ui/typography/typography";
 import FriendItem from "./friend-item";
 
 export default function FriendsTab() {
   const t = useTranslations();
-  const { data: friendsList = [], isLoading: isUsersLoading } = useGetAllFriends();
+  const { data: friendsList = [], isLoading: isFriendsLoading } = useGetFriendsOnly();
 
-  if (isUsersLoading) {
+  if (isFriendsLoading) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-10 my-auto">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
@@ -38,7 +38,7 @@ export default function FriendsTab() {
           <div className="flex flex-col gap-2 max-h-[350px] max-sm:max-h-[300px] overflow-y-auto pr-1">
             {friendsList.map((friend) => (
               <FriendItem
-                key={friend.id}
+                key={friend.userId}
                 friend={friend}
               />
             ))}

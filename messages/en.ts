@@ -34,11 +34,15 @@ const messages = {
   "error-fetch-users-failed": "Failed to load users. Please try again.",
   "error-fetch-user-failed": "Failed to load user. Please try again.",
 
-  // Users
+  // Users & Friends
   "label-users-title": "Users",
   "label-users-description": "People on BuzzTown",
   "label-users-loading": "Loading users...",
   "label-users-empty": "No users found.",
+  "label-add-friend": "Add Friend",
+  "placeholder-find-friends": "Find friends...",
+  "label-searching-users": "Searching users...",
+  "label-start-chat": "Message",
 
   // General — pages & errors
   "label-not-found": "Not Found",

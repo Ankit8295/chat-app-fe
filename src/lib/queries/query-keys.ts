@@ -2,4 +2,7 @@ export enum UsersQueryKeys {
   ALL_FRIENDS = "ALL_FRIENDS",
   FRIEND = "FRIEND",
   ME = "ME",
+  SEARCH_USERS = "SEARCH_USERS",
+  FRIENDS = "FRIENDS",
+  CONVERSATIONS = "CONVERSATIONS",
 }

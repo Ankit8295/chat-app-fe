@@ -1,13 +1,47 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { UsersQueryKeys } from "../query-keys";
-import { getAllFriends, getFriendById, getMe } from "./api";
-import { User } from "./types";
+import {
+  searchUsers,
+  getFriendsOnly,
+  getConversations,
+  createConversation,
+  getFriendById,
+  getMe,
+} from "./api";
+import { User, UserSearchResult, Friend, Conversation } from "./types";
 
-function useGetAllFriends() {
-  return useQuery<User[]>({
-    queryKey: [UsersQueryKeys.ALL_FRIENDS],
-    queryFn: getAllFriends,
-    staleTime: Infinity, // Friends list is loaded at root startup; cache indefinitely and invalidate on manual modifications/socket events
+function useSearchUsers(search?: string) {
+  return useQuery<UserSearchResult[]>({
+    queryKey: [UsersQueryKeys.SEARCH_USERS, search ?? ""],
+    queryFn: () => searchUsers(search),
+  });
+}
+
+function useGetFriendsOnly() {
+  return useQuery<Friend[]>({
+    queryKey: [UsersQueryKeys.FRIENDS],
+    queryFn: getFriendsOnly,
+    staleTime: Infinity,
+  });
+}
+
+function useGetConversations() {
+  return useQuery<Conversation[]>({
+    queryKey: [UsersQueryKeys.CONVERSATIONS],
+    queryFn: getConversations,
+    staleTime: Infinity,
+  });
+}
+
+function useCreateConversation() {
+  const queryClient = useQueryClient();
+
+  return useMutation<Conversation, Error, string>({
+    mutationFn: (userId: string) => createConversation(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [UsersQueryKeys.CONVERSATIONS] });
+      queryClient.invalidateQueries({ queryKey: [UsersQueryKeys.FRIENDS] });
+    },
   });
 }
 
@@ -15,7 +49,7 @@ function useGetMe() {
   return useQuery<User>({
     queryKey: [UsersQueryKeys.ME],
     queryFn: getMe,
-    staleTime: Infinity, // The current user's profile details rarely change, cache indefinitely until explicitly invalidated
+    staleTime: Infinity,
   });
 }
 
@@ -26,4 +60,12 @@ function useGetFriend(friendId: string) {
     enabled: !!friendId,
   });
 }
-export { useGetFriend, useGetAllFriends, useGetMe };
+
+export {
+  useSearchUsers,
+  useGetFriendsOnly,
+  useGetConversations,
+  useCreateConversation,
+  useGetMe,
+  useGetFriend,
+};
