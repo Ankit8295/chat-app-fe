@@ -1,4 +1,9 @@
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  useQuery,
+  useInfiniteQuery,
+  useMutation,
+  useQueryClient,
+} from "@tanstack/react-query";
 import { UsersQueryKeys } from "../query-keys";
 import {
   searchUsers,
@@ -8,20 +13,23 @@ import {
   getFriendById,
   getMe,
 } from "./api";
-import { User, UserSearchResult, Friend, Conversation } from "./types";
+import { User, Conversation } from "./types";
 
-function useSearchUsers(search?: string) {
-  return useQuery<UserSearchResult[]>({
-    queryKey: [UsersQueryKeys.SEARCH_USERS, search ?? ""],
-    queryFn: () => searchUsers(search),
+function useInfiniteSearchUsers(search?: string, size = 10) {
+  return useInfiniteQuery({
+    queryKey: [UsersQueryKeys.SEARCH_USERS, search ?? "", size],
+    queryFn: ({ pageParam = 0 }) => searchUsers(search, pageParam, size),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.page + 1 : undefined),
   });
 }
 
-function useGetFriendsOnly() {
-  return useQuery<Friend[]>({
-    queryKey: [UsersQueryKeys.FRIENDS],
-    queryFn: getFriendsOnly,
-    staleTime: Infinity,
+function useInfiniteGetFriendsOnly(size = 10) {
+  return useInfiniteQuery({
+    queryKey: [UsersQueryKeys.FRIENDS, size],
+    queryFn: ({ pageParam = 0 }) => getFriendsOnly(pageParam, size),
+    initialPageParam: 0,
+    getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.page + 1 : undefined),
   });
 }
 
@@ -62,8 +70,8 @@ function useGetFriend(friendId: string) {
 }
 
 export {
-  useSearchUsers,
-  useGetFriendsOnly,
+  useInfiniteSearchUsers,
+  useInfiniteGetFriendsOnly,
   useGetConversations,
   useCreateConversation,
   useGetMe,

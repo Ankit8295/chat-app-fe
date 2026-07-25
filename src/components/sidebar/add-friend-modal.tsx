@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useLayoutStore } from "@/store/store";
 import { useTranslations } from "next-intl";
@@ -9,8 +9,11 @@ import XIcon from "@/icons/x";
 import SearchIcon from "@/icons/search";
 import MessageIcon from "@/icons/message-icon";
 import Typography from "@/components/ui/typography/typography";
-import { getInitials } from "@/utils/string";
-import { useSearchUsers, useCreateConversation } from "@/lib/queries/user/query";
+import { UserListItem } from "@/components/ui/user-list-item";
+import {
+  useInfiniteSearchUsers,
+  useCreateConversation,
+} from "@/lib/queries/user/query";
 import { ROUTES } from "../../../routes.config";
 
 export default function AddFriendModal() {
@@ -23,8 +26,63 @@ export default function AddFriendModal() {
 
   const [searchQuery, setSearchQuery] = useState("");
 
-  const { data: usersList = [], isLoading, isError } = useSearchUsers(searchQuery);
+  const {
+    data,
+    isLoading,
+    isError,
+    hasNextPage,
+    fetchNextPage,
+    isFetchingNextPage,
+  } = useInfiniteSearchUsers(searchQuery);
+
   const createConversation = useCreateConversation();
+
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const loadMoreRef = useRef<HTMLDivElement>(null);
+
+  // IntersectionObserver attached directly to the scroll container root
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage) return;
+
+    const scrollContainer = scrollContainerRef.current;
+    const sentinel = loadMoreRef.current;
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
+        }
+      },
+      {
+        root: scrollContainer,
+        threshold: 0.1,
+      },
+    );
+
+    if (sentinel) {
+      observer.observe(sentinel);
+    }
+
+    return () => {
+      if (sentinel) {
+        observer.unobserve(sentinel);
+      }
+    };
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage, data?.pages.length]);
+
+  // Fallback scroll listener on the container for modal viewports
+  const handleScroll = () => {
+    const container = scrollContainerRef.current;
+    if (!container || !hasNextPage || isFetchingNextPage) return;
+
+    const { scrollTop, scrollHeight, clientHeight } = container;
+    if (scrollHeight - scrollTop - clientHeight < 60) {
+      fetchNextPage();
+    }
+  };
+
+  const allUsers = data?.pages.flatMap((page) => page.content) ?? [];
+  const totalElements = data?.pages[0]?.totalElements ?? 0;
 
   const handleStartChat = (targetUserId: string) => {
     createConversation.mutate(targetUserId, {
@@ -43,7 +101,7 @@ export default function AddFriendModal() {
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity animate-fade-in" />
 
         {/* Content Box */}
-        <Dialog.Content className="fixed inset-0 m-auto z-50 flex h-[520px] w-full max-w-lg flex-col rounded-xl border border-border bg-surface-elevated p-6 shadow-2xl outline-none max-sm:h-full max-sm:w-full max-sm:max-h-full max-sm:max-w-none max-sm:m-0 max-sm:rounded-none max-sm:p-4 animate-scale-up">
+        <Dialog.Content className="fixed inset-0 m-auto z-50 flex h-[540px] w-full max-w-lg flex-col rounded-xl border border-border bg-surface-elevated p-6 shadow-2xl outline-none max-sm:h-full max-sm:w-full max-sm:max-h-full max-sm:max-w-none max-sm:m-0 max-sm:rounded-none max-sm:p-4 animate-scale-up">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border pb-3 shrink-0">
             <div>
@@ -77,10 +135,14 @@ export default function AddFriendModal() {
             />
           </div>
 
-          {/* User List */}
-          <div className="flex-1 overflow-y-auto mt-4 pr-1 min-h-0">
+          {/* User List Container with scroll listener and ref */}
+          <div
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+            className="flex-1 overflow-y-auto mt-4 pr-1 min-h-0 flex flex-col gap-2"
+          >
             {isLoading ? (
-              <div className="flex flex-col items-center justify-center gap-3 py-12">
+              <div className="flex flex-col items-center justify-center gap-3 py-12 my-auto">
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
                 <Typography variant="span" className="text-muted text-sm">
                   {t("label-searching-users") || "Searching users..."}
@@ -89,73 +151,71 @@ export default function AddFriendModal() {
             ) : isError ? (
               <div className="rounded-lg border border-dashed border-border p-6 text-center mt-4">
                 <Typography variant="span" className="text-muted text-sm">
-                  {t("error-fetch-users-failed") || "Failed to load users. Please try again."}
+                  {t("error-fetch-users-failed") ||
+                    "Failed to load users. Please try again."}
                 </Typography>
               </div>
-            ) : usersList.length === 0 ? (
+            ) : allUsers.length === 0 ? (
               <div className="rounded-lg border border-dashed border-border p-8 text-center mt-4">
                 <Typography variant="span" className="text-muted text-sm">
                   {t("label-users-empty") || "No users found."}
                 </Typography>
               </div>
             ) : (
-              <div className="flex flex-col gap-2">
-                {usersList.map((user) => {
-                  const initials = getInitials(user.name || user.email);
+              <>
+                <div className="text-xs font-semibold text-muted mb-1 px-1 flex justify-between items-center shrink-0">
+                  <span>Results ({totalElements})</span>
+                </div>
+
+                {allUsers.map((user) => {
                   const isPendingThisUser =
                     createConversation.isPending &&
                     createConversation.variables === user.id;
 
                   return (
-                    <div
+                    <UserListItem
                       key={user.id}
-                      className="flex items-center justify-between rounded-lg border border-border bg-secondary/20 px-3.5 py-2.5 hover:bg-secondary/40 transition-colors"
+                      name={user.name}
+                      email={user.email}
+                      image={user.img}
                     >
-                      <div className="flex items-center gap-3 min-w-0">
-                        <span className="flex size-10 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-foreground shrink-0 overflow-hidden">
-                          {user.img ? (
-                            <img
-                              src={user.img}
-                              alt={user.name}
-                              className="size-full object-cover"
-                            />
-                          ) : (
-                            initials
-                          )}
-                        </span>
-                        <div className="min-w-0 flex-1">
-                          <Typography
-                            variant="span"
-                            className="block truncate font-medium text-sm text-foreground"
-                          >
-                            {user.name}
-                          </Typography>
-                          <Typography
-                            variant="span"
-                            className="block truncate text-xs text-muted"
-                          >
-                            {user.email}
-                          </Typography>
-                        </div>
-                      </div>
-
-                      <button
-                        type="button"
+                      <UserListItem.Action
                         disabled={isPendingThisUser}
                         onClick={() => handleStartChat(user.id)}
                         title={t("label-start-chat") || "Message"}
-                        className="flex items-center justify-center rounded-lg p-2 text-foreground/70 hover:bg-primary/20 hover:text-primary transition-colors cursor-pointer outline-none shrink-0 disabled:opacity-50"
+                        variant="default"
                       >
                         {isPendingThisUser ? (
                           <div className="size-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                         ) : (
                           <MessageIcon className="size-5 stroke-current" />
                         )}
-                      </button>
-                    </div>
+                      </UserListItem.Action>
+                    </UserListItem>
                   );
                 })}
-              </div>
+
+                {/* Infinite Scroll Trigger Sentinel & Loading Indicator */}
+                <div
+                  ref={loadMoreRef}
+                  className="py-3 flex items-center justify-center shrink-0"
+                >
+                  {isFetchingNextPage ? (
+                    <div className="flex items-center gap-2 text-xs text-muted">
+                      <div className="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                      Loading more users...
+                    </div>
+                  ) : hasNextPage ? (
+                    <span className="text-xs text-muted/60">
+                      Scroll down for more...
+                    </span>
+                  ) : (
+                    <span className="text-xs text-muted/40">
+                      Reached end of results
+                    </span>
+                  )}
+                </div>
+              </>
             )}
           </div>
         </Dialog.Content>

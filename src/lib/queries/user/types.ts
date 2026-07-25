@@ -36,3 +36,12 @@ export type Conversation = {
 export type CreateConversationRequest = {
   userId: string;
 };
+
+export type PageResponse<T> = {
+  content: T[];
+  page: number;
+  size: number;
+  totalElements: number;
+  totalPages: number;
+  hasMore: boolean;
+};

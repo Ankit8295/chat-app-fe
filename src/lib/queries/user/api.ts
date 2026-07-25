@@ -1,13 +1,17 @@
 import { API_ROUTES } from "@/lib/api/api-routes";
 import { axiosClient } from "@/lib/api/axios-client";
-import { User, UserSearchResult, Friend, Conversation } from "./types";
+import { User, UserSearchResult, Friend, Conversation, PageResponse } from "./types";
 
-export async function searchUsers(search?: string) {
+export async function searchUsers(search?: string, page = 0, size = 10): Promise<PageResponse<UserSearchResult>> {
   try {
-    const response = await axiosClient.get<UserSearchResult[]>(
+    const response = await axiosClient.get<PageResponse<UserSearchResult>>(
       API_ROUTES.users.searchUsers,
       {
-        params: search ? { search } : undefined,
+        params: {
+          ...(search ? { search } : {}),
+          page,
+          size,
+        },
       }
     );
     return response.data;
@@ -17,10 +21,13 @@ export async function searchUsers(search?: string) {
   }
 }
 
-export async function getFriendsOnly() {
+export async function getFriendsOnly(page = 0, size = 10): Promise<PageResponse<Friend>> {
   try {
-    const response = await axiosClient.get<Friend[]>(
-      API_ROUTES.users.getFriends
+    const response = await axiosClient.get<PageResponse<Friend>>(
+      API_ROUTES.users.getFriends,
+      {
+        params: { page, size },
+      }
     );
     return response.data;
   } catch (error) {
