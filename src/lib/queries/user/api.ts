@@ -15,6 +15,19 @@ export async function getAllFriends() {
   }
 }
 
+export async function getMe() {
+  try {
+    const response = await axiosClient.get<User>(
+      API_ROUTES.users.getMe,
+    );
+
+    return response.data;
+  } catch (error) {
+    console.error("error", error);
+    throw new Error("something went wrong");
+  }
+}
+
 export async function getFriendById(userId: string) {
   try {
     const response = await axiosClient.get<User>(

@@ -2,6 +2,7 @@
 
 import { User } from "@/lib/queries/user/types";
 import { cn } from "../../../cn.config";
+import { getInitials } from "@/utils/string";
 
 type Props = {
   user: User;
@@ -10,15 +11,6 @@ type Props = {
   isOnline?: boolean;
   onClick?: () => void;
 };
-
-function getInitials(name: string) {
-  return name
-    .split(" ")
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .join("");
-}
 
 export default function SidebarUserItem({
   user,

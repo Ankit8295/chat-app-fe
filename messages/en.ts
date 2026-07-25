@@ -50,6 +50,23 @@ const messages = {
   // General — UI
   "label-toggle-theme": "Toggle theme",
   "label-word-placeholder": "Word",
+
+  // Settings
+  "label-settings": "Settings",
+  "label-profile": "Profile",
+  "label-manage-friends": "Manage Friends",
+  "label-blocked-users": "Blocked Users",
+  "label-remove": "Remove",
+  "label-block": "Block",
+  "label-unblock": "Unblock",
+  "label-restore": "Restore",
+  "label-no-friends": "No friends found.",
+  "label-no-blocked": "No blocked users.",
+  "label-profile-details": "Profile Details",
+  "label-name": "Name",
+  "label-close": "Close",
+  "label-loading-profile": "Loading profile...",
+  "label-loading-friends": "Loading friends...",
 } as const;
 
 export default messages;

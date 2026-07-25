@@ -6,6 +6,7 @@ export const API_ROUTES = {
   },
   users: {
     getAllFriends: "/api/v1/users",
+    getMe: "/api/v1/users/me",
     getFriendById: (userId: string) => `/api/v1/users/${userId}`,
   },
 } as const;
