@@ -6,6 +6,7 @@ import * as Tabs from "@radix-ui/react-tabs";
 import { useLayoutStore } from "@/store/store";
 import { useTranslations } from "next-intl";
 import XIcon from "@/icons/x";
+import Typography from "@/components/ui/typography/typography";
 import ProfileTab from "./profile-tab";
 import FriendsTab from "./friends-tab";
 
@@ -26,17 +27,17 @@ export default function SettingsModal() {
           <div className="flex items-center justify-between border-b border-border pb-3 shrink-0">
             <div>
               <Dialog.Title className="text-xl font-bold text-foreground max-sm:text-lg">
-                {t("label-settings") || "Settings"}
+                {t("label-settings")}
               </Dialog.Title>
               <Dialog.Description className="sr-only">
-                Customize your profile settings and manage friends.
+                {t("description-settings-modal")}
               </Dialog.Description>
             </div>
             <Dialog.Close asChild>
               <button
                 type="button"
                 className="rounded-full p-1.5 text-foreground/50 hover:bg-secondary hover:text-foreground transition-colors cursor-pointer outline-none"
-                aria-label={t("label-close") || "Close"}
+                aria-label={t("label-close")}
               >
                 <XIcon className="size-5" />
               </button>
@@ -54,14 +55,14 @@ export default function SettingsModal() {
                 value="profile"
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-left text-foreground/70 hover:bg-secondary hover:text-foreground transition-all cursor-pointer outline-none data-[state=active]:bg-primary/20 data-[state=active]:text-primary border-l-3 max-sm:border-l-0 max-sm:border-b-3 border-transparent data-[state=active]:border-primary max-sm:flex-1 max-sm:justify-center max-sm:py-2 max-sm:rounded-b-none"
               >
-                <span>{t("label-profile") || "Profile"}</span>
+                <Typography variant="span">{t("label-profile")}</Typography>
               </Tabs.Trigger>
 
               <Tabs.Trigger
                 value="friends"
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-left text-foreground/70 hover:bg-secondary hover:text-foreground transition-all cursor-pointer outline-none data-[state=active]:bg-primary/20 data-[state=active]:text-primary border-l-3 max-sm:border-l-0 max-sm:border-b-3 border-transparent data-[state=active]:border-primary max-sm:flex-1 max-sm:justify-center max-sm:py-2 max-sm:rounded-b-none"
               >
-                <span>{t("label-manage-friends") || "Manage Friends"}</span>
+                <Typography variant="span">{t("label-manage-friends")}</Typography>
               </Tabs.Trigger>
             </Tabs.List>
 

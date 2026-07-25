@@ -18,7 +18,7 @@ export default function ProfileTab() {
       <div className="flex flex-col items-center justify-center gap-3 py-10 my-auto">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
         <Typography variant="span" className="text-muted">
-          {t("label-loading-profile") || "Loading profile..."}
+          {t("label-loading-profile")}
         </Typography>
       </div>
     );
@@ -27,7 +27,7 @@ export default function ProfileTab() {
   if (profileError) {
     return (
       <Typography variant="p" className="text-destructive font-medium my-auto text-center">
-        {t("something-went-wrong") || "Failed to load profile."}
+        {t("something-went-wrong")}
       </Typography>
     );
   }
@@ -50,11 +50,11 @@ export default function ProfileTab() {
       {/* Profile Form Details */}
       <div className="w-full flex flex-col gap-4 max-sm:gap-3">
         <Typography variant="h4" className="text-center font-bold text-foreground max-sm:text-base">
-          {t("label-profile-details") || "Profile Details"}
+          {t("label-profile-details")}
         </Typography>
 
         <CustomInput
-          label={t("label-name") || "Name"}
+          label={t("label-name")}
           value={currentUser?.name}
           readOnly
           variant="bordered"
@@ -62,7 +62,7 @@ export default function ProfileTab() {
         />
 
         <CustomInput
-          label={t("label-email") || "Email"}
+          label={t("label-email")}
           value={currentUser?.email}
           readOnly
           variant="bordered"

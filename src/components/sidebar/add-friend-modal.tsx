@@ -114,17 +114,17 @@ export default function AddFriendModal() {
           <div className="flex items-center justify-between border-b border-border pb-3 shrink-0">
             <div>
               <Dialog.Title className="text-xl font-bold text-foreground max-sm:text-lg">
-                {t("label-add-friend") || "Add Friends"}
+                {t("label-add-friend")}
               </Dialog.Title>
               <Dialog.Description className="sr-only">
-                Find friends and start new conversations.
+                {t("description-add-friend-modal")}
               </Dialog.Description>
             </div>
             <Dialog.Close asChild>
               <button
                 type="button"
                 className="rounded-full p-1.5 text-foreground/50 hover:bg-secondary hover:text-foreground transition-colors cursor-pointer outline-none"
-                aria-label={t("label-close") || "Close"}
+                aria-label={t("label-close")}
               >
                 <XIcon className="size-5" />
               </button>
@@ -138,10 +138,7 @@ export default function AddFriendModal() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={
-                t("placeholder-find-friends") ||
-                "Find friends by name or email..."
-              }
+              placeholder={t("placeholder-find-friends")}
               className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none transition-colors"
               autoFocus
             />
@@ -163,14 +160,13 @@ export default function AddFriendModal() {
                   variant="h3"
                   className="text-base font-semibold text-foreground"
                 >
-                  {t("label-search-friends-prompt") || "Search for Friends"}
+                  {t("label-search-friends-prompt")}
                 </Typography>
                 <Typography
                   variant="p"
                   className="text-xs text-muted max-w-xs leading-relaxed"
                 >
-                  {t("label-search-friends-hint") ||
-                    "Type a name or email address above to search for people on BuzzTown."}
+                  {t("label-search-friends-hint")}
                 </Typography>
               </div>
             ) : isLoading ? (
@@ -178,15 +174,14 @@ export default function AddFriendModal() {
               <div className="flex flex-col items-center justify-center gap-3 py-12 my-auto">
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
                 <Typography variant="span" className="text-muted text-sm">
-                  {t("label-searching-users") || "Searching users..."}
+                  {t("label-searching-users")}
                 </Typography>
               </div>
             ) : isError ? (
               /* Error State */
               <div className="rounded-lg border border-dashed border-border p-6 text-center my-auto">
                 <Typography variant="span" className="text-muted text-sm">
-                  {t("error-fetch-users-failed") ||
-                    "Failed to load users. Please try again."}
+                  {t("error-fetch-users-failed")}
                 </Typography>
               </div>
             ) : allUsers.length === 0 ? (
@@ -196,19 +191,19 @@ export default function AddFriendModal() {
                   variant="span"
                   className="font-semibold text-sm text-foreground"
                 >
-                  {t("label-no-search-results") ||
-                    "No users found matching your search."}
+                  {t("label-no-search-results")}
                 </Typography>
                 <Typography variant="span" className="text-xs text-muted">
-                  Try searching with a different name or email address.
+                  {t("label-no-search-results-hint")}
                 </Typography>
               </div>
             ) : (
               /* Results List with Infinite Scrolling */
               <div className="flex flex-col gap-2">
                 <div className="text-xs font-semibold text-muted mb-1 px-1 flex justify-between items-center shrink-0">
-                  <span>Results ({totalElements})</span>
-                  <span>Page {data?.pages.length} loaded</span>
+                  <Typography variant="span">
+                    {t("label-results")} ({totalElements})
+                  </Typography>
                 </div>
 
                 {allUsers.map((user) => {
@@ -226,7 +221,7 @@ export default function AddFriendModal() {
                       <UserListItem.Action
                         disabled={isPendingThisUser}
                         onClick={() => handleStartChat(user.id)}
-                        title={t("label-start-chat") || "Message"}
+                        title={t("label-start-chat")}
                         variant="default"
                       >
                         {isPendingThisUser ? (
@@ -247,16 +242,24 @@ export default function AddFriendModal() {
                   {isFetchingNextPage ? (
                     <div className="flex items-center gap-2 text-xs text-muted">
                       <div className="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                      Loading more users...
+                      <Typography variant="span">
+                        {t("label-loading-more-users")}
+                      </Typography>
                     </div>
                   ) : hasNextPage ? (
-                    <span className="text-xs text-muted/60">
-                      Scroll down for more...
-                    </span>
+                    <Typography
+                      variant="span"
+                      className="text-xs text-muted/60"
+                    >
+                      {t("label-scroll-for-more")}
+                    </Typography>
                   ) : (
-                    <span className="text-xs text-muted/40">
-                      Reached end of results
-                    </span>
+                    <Typography
+                      variant="span"
+                      className="text-xs text-muted/40"
+                    >
+                      {t("label-end-of-results")}
+                    </Typography>
                   )}
                 </div>
               </div>

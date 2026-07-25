@@ -28,24 +28,35 @@ const messages = {
   "validation-password-number": "Contain at least one number.",
   "validation-password-special": "Contain at least one special character.",
 
-  // Auth — errors
+  // Auth & API — errors
   "error-backend-unavailable": "Server error",
   "error-authentication-failed": "Authentication failed. Please try again.",
   "error-fetch-users-failed": "Failed to load users. Please try again.",
   "error-fetch-user-failed": "Failed to load user. Please try again.",
+  "error-fetch-friends-failed":
+    "Failed to load friends list. Please try again.",
 
-  // Users & Friends
-  "label-users-title": "Users",
-  "label-users-description": "People on BuzzTown",
-  "label-users-loading": "Loading users...",
-  "label-users-empty": "No users found.",
+  // Users, Friends & Conversations
   "label-add-friend": "Add Friends",
+  "description-add-friend-modal": "Find friends and start new conversations.",
   "placeholder-find-friends": "Find friends by name or email...",
   "label-searching-users": "Searching users...",
   "label-start-chat": "Message",
   "label-search-friends-prompt": "Search for Friends",
-  "label-search-friends-hint": "Type a name or email address above to search for people on BuzzTown.",
+  "label-search-friends-hint":
+    "Type a name or email address above to search for people on BuzzTown.",
   "label-no-search-results": "No users found matching your search.",
+  "label-no-search-results-hint":
+    "Try searching with a different name or email address.",
+  "label-results": "Results",
+  "label-page-loaded": "Page {page} loaded",
+  "label-loading-more-users": "Loading more users...",
+  "label-loading-more-friends": "Loading more friends...",
+  "label-scroll-for-more": "Scroll down for more...",
+  "label-end-of-results": "Reached end of results",
+  "label-end-of-friends": "Reached end of friends list",
+  "label-conversation": "Conversation",
+  "label-online": "Online",
 
   // General — pages & errors
   "label-not-found": "Not Found",
@@ -60,15 +71,13 @@ const messages = {
 
   // Settings
   "label-settings": "Settings",
+  "description-settings-modal":
+    "Customize your profile settings and manage friends.",
   "label-profile": "Profile",
   "label-manage-friends": "Manage Friends",
-  "label-blocked-users": "Blocked Users",
   "label-remove": "Remove",
   "label-block": "Block",
-  "label-unblock": "Unblock",
-  "label-restore": "Restore",
   "label-no-friends": "No friends found.",
-  "label-no-blocked": "No blocked users.",
   "label-profile-details": "Profile Details",
   "label-name": "Name",
   "label-close": "Close",

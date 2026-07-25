@@ -7,6 +7,7 @@ import { useLayoutStore } from "@/store/store";
 import SettingsIcon from "@/icons/settings";
 import AddIcon from "@/icons/add";
 import ThemeToggle from "@/components/ui/theme-toggle";
+import Typography from "@/components/ui/typography/typography";
 import { useTranslations } from "next-intl";
 import { cn } from "../../../cn.config";
 
@@ -51,7 +52,7 @@ export default function AppSidebar({ isExpanded }: Props) {
             isExpanded ? "w-full px-2 py-1" : "w-full px-2",
             isAddFriendOpen && "bg-secondary"
           )}
-          title={t("label-add-friend") || "Add Friends"}
+          title={t("label-add-friend")}
         >
           <span
             aria-hidden
@@ -82,14 +83,15 @@ export default function AppSidebar({ isExpanded }: Props) {
           </span>
 
           {isExpanded && (
-            <span
+            <Typography
+              variant="span"
               className={cn(
                 "min-w-0 flex-1 truncate text-left text-sm font-medium text-foreground transition-colors duration-200 group-hover:text-primary",
                 isAddFriendOpen && "text-primary"
               )}
             >
-              {t("label-add-friend") || "Add Friends"}
-            </span>
+              {t("label-add-friend")}
+            </Typography>
           )}
         </button>
 
@@ -103,7 +105,7 @@ export default function AppSidebar({ isExpanded }: Props) {
               isExpanded ? "flex-1 px-2 py-1" : "w-full px-2",
               isSettingsOpen && "bg-secondary"
             )}
-            title={t("label-settings") || "Settings"}
+            title={t("label-settings")}
           >
             <span
               aria-hidden
@@ -134,14 +136,15 @@ export default function AppSidebar({ isExpanded }: Props) {
             </span>
 
             {isExpanded && (
-              <span
+              <Typography
+                variant="span"
                 className={cn(
                   "min-w-0 flex-1 truncate text-left text-sm font-medium text-foreground transition-colors duration-200 group-hover:text-primary",
                   isSettingsOpen && "text-primary"
                 )}
               >
-                {t("label-settings") || "Settings"}
-              </span>
+                {t("label-settings")}
+              </Typography>
             )}
           </button>
 

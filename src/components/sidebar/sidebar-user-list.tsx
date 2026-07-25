@@ -6,6 +6,7 @@ import { useParams, useRouter } from "next/navigation";
 import { ROUTES } from "../../../routes.config";
 import { useEffect } from "react";
 import { Conversation } from "@/lib/queries/user/types";
+import { useTranslations } from "next-intl";
 
 type Props = {
   conversations: Conversation[];
@@ -18,6 +19,7 @@ export default function SidebarUserList({
   isExpanded,
   isLoading = false,
 }: Props) {
+  const t = useTranslations();
   const router = useRouter();
   const params = useParams<{ id: string }>();
   const activeUserId = useLayoutStore((state) => state.activeUserId);
@@ -43,7 +45,7 @@ export default function SidebarUserList({
             key={conv.id}
             user={{
               id: conv.id,
-              name: conv.name || "Conversation",
+              name: conv.name || t("label-conversation"),
               email: "",
               img: conv.image,
             }}

@@ -67,7 +67,7 @@ export default function FriendsTab() {
       <div className="flex flex-col items-center justify-center gap-3 py-10 my-auto">
         <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
         <Typography variant="span" className="text-muted text-sm">
-          {t("label-loading-friends") || "Loading friends..."}
+          {t("label-loading-friends")}
         </Typography>
       </div>
     );
@@ -77,7 +77,7 @@ export default function FriendsTab() {
     return (
       <div className="rounded-lg border border-dashed border-border p-6 text-center">
         <Typography variant="span" className="text-muted text-sm">
-          Failed to load friends list. Please try again.
+          {t("error-fetch-friends-failed")}
         </Typography>
       </div>
     );
@@ -91,14 +91,14 @@ export default function FriendsTab() {
             variant="span"
             className="text-xs font-bold uppercase tracking-wider text-muted block"
           >
-            {t("label-manage-friends") || "Active Friends"} ({totalElements})
+            {t("label-manage-friends")} ({totalElements})
           </Typography>
         </div>
 
         {allFriends.length === 0 ? (
           <div className="rounded-lg border border-dashed border-border p-6 text-center">
             <Typography variant="span" className="text-muted">
-              {t("label-no-friends") || "No friends found."}
+              {t("label-no-friends")}
             </Typography>
           </div>
         ) : (
@@ -119,16 +119,24 @@ export default function FriendsTab() {
               {isFetchingNextPage ? (
                 <div className="flex items-center gap-2 text-xs text-muted">
                   <div className="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                  Loading more friends...
+                  <Typography variant="span">
+                    {t("label-loading-more-friends")}
+                  </Typography>
                 </div>
               ) : hasNextPage ? (
-                <span className="text-xs text-muted/60">
-                  Scroll down for more...
-                </span>
+                <Typography
+                  variant="span"
+                  className="text-xs text-muted/60"
+                >
+                  {t("label-scroll-for-more")}
+                </Typography>
               ) : (
-                <span className="text-xs text-muted/40">
-                  Reached end of friends list
-                </span>
+                <Typography
+                  variant="span"
+                  className="text-xs text-muted/40"
+                >
+                  {t("label-end-of-friends")}
+                </Typography>
               )}
             </div>
           </div>

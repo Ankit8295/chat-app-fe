@@ -2,6 +2,7 @@
 
 import { useTranslations } from "next-intl";
 import { useEffect } from "react";
+import Typography from "@/components/ui/typography/typography";
 
 export default function Error({
   error,
@@ -18,7 +19,7 @@ export default function Error({
 
   return (
     <div>
-      <h2>{t("something-went-wrong")}</h2>
+      <Typography variant="h2">{t("something-went-wrong")}</Typography>
       <button onClick={() => reset()}>{t("try-again")}</button>
     </div>
   );

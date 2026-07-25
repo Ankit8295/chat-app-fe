@@ -23,7 +23,7 @@ export default function FriendItem({ friend }: FriendItemProps) {
         onClick={() =>
           console.log("Future API call: remove friend", friend.userId)
         }
-        title={t("label-remove") || "Remove"}
+        title={t("label-remove")}
         variant="danger"
       >
         <TrashIcon className="size-4 max-sm:size-[18px]" />
@@ -33,7 +33,7 @@ export default function FriendItem({ friend }: FriendItemProps) {
         onClick={() =>
           console.log("Future API call: block user", friend.userId)
         }
-        title={t("label-block") || "Block"}
+        title={t("label-block")}
         variant="danger"
       >
         <BlockIcon className="size-4 max-sm:size-[18px]" />

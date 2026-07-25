@@ -3,6 +3,8 @@
 import { User } from "@/lib/queries/user/types";
 import { cn } from "../../../cn.config";
 import { getInitials } from "@/utils/string";
+import Typography from "@/components/ui/typography/typography";
+import { useTranslations } from "next-intl";
 
 type Props = {
   user: User;
@@ -19,6 +21,7 @@ export default function SidebarUserItem({
   isOnline = false,
   onClick,
 }: Props) {
+  const t = useTranslations();
   const initials = getInitials(user.name || user.email);
 
   return (
@@ -61,21 +64,22 @@ export default function SidebarUserItem({
 
         {isOnline && (
           <span
-            aria-label="Online"
+            aria-label={t("label-online")}
             className="absolute right-0 bottom-0 size-3 rounded-full border-2 border-surface bg-success-text"
           />
         )}
       </span>
 
       {isExpanded && (
-        <span
+        <Typography
+          variant="span"
           className={cn(
             "min-w-0 flex-1 truncate text-left text-sm font-medium text-foreground",
             isActive && "text-primary",
           )}
         >
           {user.name}
-        </span>
+        </Typography>
       )}
     </button>
   );
