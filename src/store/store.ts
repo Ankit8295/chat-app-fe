@@ -2,11 +2,11 @@ import { create } from "zustand";
 
 interface LayoutState {
   isSidebarExpanded: boolean;
-  activeUserId: string | null;
+  activeConversatoinId: string | null;
   isSettingsOpen: boolean;
   isAddFriendOpen: boolean;
   setSidebarExpanded: (value: boolean) => void;
-  setActiveUserId: (userId: string | null) => void;
+  setActiveConversationId: (conversationId: string | null) => void;
   toggleSidebar: () => void;
   setSettingsOpen: (value: boolean) => void;
   setAddFriendOpen: (value: boolean) => void;
@@ -14,11 +14,12 @@ interface LayoutState {
 
 export const useLayoutStore = create<LayoutState>()((set) => ({
   isSidebarExpanded: false,
-  activeUserId: null,
+  activeConversatoinId: null,
   isSettingsOpen: false,
   isAddFriendOpen: false,
   setSidebarExpanded: (value) => set({ isSidebarExpanded: value }),
-  setActiveUserId: (userId) => set({ activeUserId: userId }),
+  setActiveConversationId: (conversationId) =>
+    set({ activeConversatoinId: conversationId }),
   toggleSidebar: () =>
     set((state) => ({ isSidebarExpanded: !state.isSidebarExpanded })),
   setSettingsOpen: (value) => set({ isSettingsOpen: value }),

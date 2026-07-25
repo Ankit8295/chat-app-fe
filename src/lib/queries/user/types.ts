@@ -37,6 +37,15 @@ export type CreateConversationRequest = {
   userId: string;
 };
 
+export type UserPreference = {
+  userId: string;
+  lastConversationId: string | null;
+};
+
+export type CreateUserPreferenceRequest = {
+  lastConversationId: string | null;
+};
+
 export type PageResponse<T> = {
   content: T[];
   page: number;

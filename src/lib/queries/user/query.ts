@@ -12,8 +12,10 @@ import {
   createConversation,
   getFriendById,
   getMe,
+  getUserPreferences,
+  setUserPreferences,
 } from "./api";
-import { User, Conversation } from "./types";
+import { User, Conversation, UserPreference } from "./types";
 
 function useInfiniteSearchUsers(search?: string, size = 10) {
   const queryTerm = search?.trim() ?? "";
@@ -71,6 +73,26 @@ function useGetFriend(friendId: string) {
   });
 }
 
+function useGetUserPreferences() {
+  return useQuery<UserPreference>({
+    queryKey: [UsersQueryKeys.PREFERENCES],
+    queryFn: getUserPreferences,
+    staleTime: 60 * 1000,
+  });
+}
+
+function useSetUserPreferences() {
+  const queryClient = useQueryClient();
+
+  return useMutation<UserPreference, Error, string | null>({
+    mutationFn: (lastConversationId: string | null) =>
+      setUserPreferences(lastConversationId),
+    onSuccess: (data) => {
+      queryClient.setQueryData([UsersQueryKeys.PREFERENCES], data);
+    },
+  });
+}
+
 export {
   useInfiniteSearchUsers,
   useInfiniteGetFriendsOnly,
@@ -78,4 +100,6 @@ export {
   useCreateConversation,
   useGetMe,
   useGetFriend,
+  useGetUserPreferences,
+  useSetUserPreferences,
 };

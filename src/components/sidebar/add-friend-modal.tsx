@@ -22,7 +22,9 @@ export default function AddFriendModal() {
 
   const isAddFriendOpen = useLayoutStore((state) => state.isAddFriendOpen);
   const setAddFriendOpen = useLayoutStore((state) => state.setAddFriendOpen);
-  const setActiveUserId = useLayoutStore((state) => state.setActiveUserId);
+  const setActiveConversationId = useLayoutStore(
+    (state) => state.setActiveConversationId,
+  );
 
   const [searchQuery, setSearchQuery] = useState("");
   const trimmedQuery = searchQuery.trim();
@@ -96,7 +98,7 @@ export default function AddFriendModal() {
     createConversation.mutate(targetUserId, {
       onSuccess: (conversation) => {
         setAddFriendOpen(false);
-        setActiveUserId(conversation.id);
+        setActiveConversationId(conversation.id);
         router.push(ROUTES.CHAT(conversation.id));
       },
     });

@@ -1,6 +1,6 @@
 import { API_ROUTES } from "@/lib/api/api-routes";
 import { axiosClient } from "@/lib/api/axios-client";
-import { User, UserSearchResult, Friend, Conversation, PageResponse } from "./types";
+import { User, UserSearchResult, Friend, Conversation, PageResponse, UserPreference } from "./types";
 
 export async function searchUsers(search?: string, page = 0, size = 10): Promise<PageResponse<UserSearchResult>> {
   try {
@@ -82,5 +82,32 @@ export async function getFriendById(userId: string) {
   } catch (error) {
     console.error("error fetching user details", error);
     throw new Error("something went wrong");
+  }
+}
+
+export async function getUserPreferences(): Promise<UserPreference> {
+  try {
+    const response = await axiosClient.get<UserPreference>(
+      API_ROUTES.users.getPreferences
+    );
+    return response.data;
+  } catch (error) {
+    console.error("error fetching user preferences", error);
+    throw new Error("Failed to fetch user preferences");
+  }
+}
+
+export async function setUserPreferences(
+  lastConversationId: string | null
+): Promise<UserPreference> {
+  try {
+    const response = await axiosClient.post<UserPreference>(
+      API_ROUTES.users.setPreferences,
+      { lastConversationId }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("error setting user preferences", error);
+    throw new Error("Failed to set user preferences");
   }
 }

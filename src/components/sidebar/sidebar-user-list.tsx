@@ -4,9 +4,13 @@ import SidebarUserItem from "./sidebar-user-item";
 import { useLayoutStore } from "@/store/store";
 import { useParams, useRouter } from "next/navigation";
 import { ROUTES } from "../../../routes.config";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Conversation } from "@/lib/queries/user/types";
 import { useTranslations } from "next-intl";
+import {
+  useGetUserPreferences,
+  useSetUserPreferences,
+} from "@/lib/queries/user/query";
 
 type Props = {
   conversations: Conversation[];
@@ -22,20 +26,37 @@ export default function SidebarUserList({
   const t = useTranslations();
   const router = useRouter();
   const params = useParams<{ id: string }>();
-  const activeUserId = useLayoutStore((state) => state.activeUserId);
-  const setActiveUserId = useLayoutStore((state) => state.setActiveUserId);
+  const activeConversatoinId = useLayoutStore(
+    (state) => state.activeConversatoinId,
+  );
+  const setActiveConversationId = useLayoutStore(
+    (state) => state.setActiveConversationId,
+  );
+  const { data: preferences } = useGetUserPreferences();
+  const { mutate: setUserPreference } = useSetUserPreferences();
+  const lastSentIdRef = useRef<string | null>(null);
 
   const onConversationClick = (conversation: Conversation) => {
-    setActiveUserId(conversation.id);
+    setActiveConversationId(conversation.id);
     router.push(ROUTES.CHAT(conversation.id));
   };
 
   useEffect(() => {
     const id = params?.id;
     if (id) {
-      setActiveUserId(id);
+      setActiveConversationId(id);
+      if (
+        preferences &&
+        preferences.lastConversationId !== id &&
+        lastSentIdRef.current !== id
+      ) {
+        lastSentIdRef.current = id;
+        setUserPreference(id);
+      }
+    } else {
+      setActiveConversationId(null);
     }
-  }, [params?.id, setActiveUserId]);
+  }, [params?.id, preferences]);
 
   return (
     <div className="flex w-full flex-1 flex-col items-center gap-2 overflow-y-auto pt-2">
@@ -50,7 +71,7 @@ export default function SidebarUserList({
               img: conv.image,
             }}
             isExpanded={isExpanded}
-            isActive={conv.id === activeUserId}
+            isActive={conv.id === activeConversatoinId}
             onClick={() => onConversationClick(conv)}
           />
         ))}

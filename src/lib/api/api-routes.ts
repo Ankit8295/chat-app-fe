@@ -8,6 +8,8 @@ export const API_ROUTES = {
     searchUsers: "/api/v1/users",
     getFriends: "/api/v1/users/friends",
     getMe: "/api/v1/users/me",
+    getPreferences: "/api/v1/users/me/preferences",
+    setPreferences: "/api/v1/users/me/preferences",
     getFriendById: (userId: string) => `/api/v1/users/${userId}`,
   },
   conversations: {

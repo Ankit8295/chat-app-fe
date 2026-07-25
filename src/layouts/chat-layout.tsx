@@ -3,7 +3,7 @@ import AppSidebar from "@/components/sidebar/app-sidebar";
 import SettingsModal from "@/components/settings/settings-modal";
 import ArrowIcon from "@/icons/arrow";
 import { useLayoutStore } from "@/store/store";
-import { useGetMe } from "@/lib/queries/user/query";
+import { useGetMe, useGetUserPreferences } from "@/lib/queries/user/query";
 import { type ReactNode } from "react";
 
 type Props = {
@@ -14,9 +14,9 @@ export default function ChatLayout({ children }: Props) {
   const isExpanded = useLayoutStore((state) => state.isSidebarExpanded);
   const toggleSidebar = useLayoutStore((state) => state.toggleSidebar);
 
-  // Prefetch/Load the logged-in user profile on application layout load.
-  // This populates the React Query cache instantly, ensuring we don't trigger the API call when opening the Settings modal.
+  // Prefetch/Load the logged-in user profile & preferences on application layout load.
   useGetMe();
+  useGetUserPreferences();
 
   return (
     <div className="flex h-screen w-full overflow-hidden max-sm:relative">

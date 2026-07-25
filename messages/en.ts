@@ -57,6 +57,9 @@ const messages = {
   "label-end-of-friends": "Reached end of friends list",
   "label-conversation": "Conversation",
   "label-online": "Online",
+  "label-no-conversation-selected": "Select a conversation",
+  "description-no-conversation-selected":
+    "Choose a conversation from the sidebar or add a friend to start chatting.",
 
   // General — pages & errors
   "label-not-found": "Not Found",
