@@ -25,6 +25,7 @@ export default function AddFriendModal() {
   const setActiveUserId = useLayoutStore((state) => state.setActiveUserId);
 
   const [searchQuery, setSearchQuery] = useState("");
+  const trimmedQuery = searchQuery.trim();
 
   const {
     data,
@@ -33,7 +34,7 @@ export default function AddFriendModal() {
     hasNextPage,
     fetchNextPage,
     isFetchingNextPage,
-  } = useInfiniteSearchUsers(searchQuery);
+  } = useInfiniteSearchUsers(trimmedQuery);
 
   const createConversation = useCreateConversation();
 
@@ -42,7 +43,7 @@ export default function AddFriendModal() {
 
   // IntersectionObserver attached directly to the scroll container root
   useEffect(() => {
-    if (!hasNextPage || isFetchingNextPage) return;
+    if (!trimmedQuery || !hasNextPage || isFetchingNextPage) return;
 
     const scrollContainer = scrollContainerRef.current;
     const sentinel = loadMoreRef.current;
@@ -68,12 +69,19 @@ export default function AddFriendModal() {
         observer.unobserve(sentinel);
       }
     };
-  }, [hasNextPage, isFetchingNextPage, fetchNextPage, data?.pages.length]);
+  }, [
+    trimmedQuery,
+    hasNextPage,
+    isFetchingNextPage,
+    fetchNextPage,
+    data?.pages.length,
+  ]);
 
   // Fallback scroll listener on the container for modal viewports
   const handleScroll = () => {
     const container = scrollContainerRef.current;
-    if (!container || !hasNextPage || isFetchingNextPage) return;
+    if (!container || !trimmedQuery || !hasNextPage || isFetchingNextPage)
+      return;
 
     const { scrollTop, scrollHeight, clientHeight } = container;
     if (scrollHeight - scrollTop - clientHeight < 60) {
@@ -106,7 +114,7 @@ export default function AddFriendModal() {
           <div className="flex items-center justify-between border-b border-border pb-3 shrink-0">
             <div>
               <Dialog.Title className="text-xl font-bold text-foreground max-sm:text-lg">
-                {t("label-add-friend") || "Add Friend"}
+                {t("label-add-friend") || "Add Friends"}
               </Dialog.Title>
               <Dialog.Description className="sr-only">
                 Find friends and start new conversations.
@@ -130,18 +138,43 @@ export default function AddFriendModal() {
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("placeholder-find-friends") || "Find friends..."}
+              placeholder={
+                t("placeholder-find-friends") ||
+                "Find friends by name or email..."
+              }
               className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none transition-colors"
+              autoFocus
             />
           </div>
 
-          {/* User List Container with scroll listener and ref */}
+          {/* Main List / State Container */}
           <div
             ref={scrollContainerRef}
             onScroll={handleScroll}
-            className="flex-1 overflow-y-auto mt-4 pr-1 min-h-0 flex flex-col gap-2"
+            className="flex-1 overflow-y-auto mt-4 pr-1 min-h-0 flex flex-col"
           >
-            {isLoading ? (
+            {!trimmedQuery ? (
+              /* Prompt State when no query is typed */
+              <div className="flex flex-col items-center justify-center text-center p-8 my-auto gap-3">
+                <span className="flex size-16 items-center justify-center rounded-full bg-secondary text-primary/80">
+                  <SearchIcon className="size-8 stroke-current" />
+                </span>
+                <Typography
+                  variant="h3"
+                  className="text-base font-semibold text-foreground"
+                >
+                  {t("label-search-friends-prompt") || "Search for Friends"}
+                </Typography>
+                <Typography
+                  variant="p"
+                  className="text-xs text-muted max-w-xs leading-relaxed"
+                >
+                  {t("label-search-friends-hint") ||
+                    "Type a name or email address above to search for people on BuzzTown."}
+                </Typography>
+              </div>
+            ) : isLoading ? (
+              /* Searching Loading State */
               <div className="flex flex-col items-center justify-center gap-3 py-12 my-auto">
                 <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
                 <Typography variant="span" className="text-muted text-sm">
@@ -149,22 +182,33 @@ export default function AddFriendModal() {
                 </Typography>
               </div>
             ) : isError ? (
-              <div className="rounded-lg border border-dashed border-border p-6 text-center mt-4">
+              /* Error State */
+              <div className="rounded-lg border border-dashed border-border p-6 text-center my-auto">
                 <Typography variant="span" className="text-muted text-sm">
                   {t("error-fetch-users-failed") ||
                     "Failed to load users. Please try again."}
                 </Typography>
               </div>
             ) : allUsers.length === 0 ? (
-              <div className="rounded-lg border border-dashed border-border p-8 text-center mt-4">
-                <Typography variant="span" className="text-muted text-sm">
-                  {t("label-users-empty") || "No users found."}
+              /* No Results State */
+              <div className="flex flex-col items-center justify-center text-center p-8 my-auto gap-2 rounded-lg border border-dashed border-border">
+                <Typography
+                  variant="span"
+                  className="font-semibold text-sm text-foreground"
+                >
+                  {t("label-no-search-results") ||
+                    "No users found matching your search."}
+                </Typography>
+                <Typography variant="span" className="text-xs text-muted">
+                  Try searching with a different name or email address.
                 </Typography>
               </div>
             ) : (
-              <>
+              /* Results List with Infinite Scrolling */
+              <div className="flex flex-col gap-2">
                 <div className="text-xs font-semibold text-muted mb-1 px-1 flex justify-between items-center shrink-0">
                   <span>Results ({totalElements})</span>
+                  <span>Page {data?.pages.length} loaded</span>
                 </div>
 
                 {allUsers.map((user) => {
@@ -215,7 +259,7 @@ export default function AddFriendModal() {
                     </span>
                   )}
                 </div>
-              </>
+              </div>
             )}
           </div>
         </Dialog.Content>

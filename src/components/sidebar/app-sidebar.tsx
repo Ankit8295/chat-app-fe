@@ -51,7 +51,7 @@ export default function AppSidebar({ isExpanded }: Props) {
             isExpanded ? "w-full px-2 py-1" : "w-full px-2",
             isAddFriendOpen && "bg-secondary"
           )}
-          title={t("label-add-friend") || "Add Friend"}
+          title={t("label-add-friend") || "Add Friends"}
         >
           <span
             aria-hidden
@@ -88,7 +88,7 @@ export default function AppSidebar({ isExpanded }: Props) {
                 isAddFriendOpen && "text-primary"
               )}
             >
-              {t("label-add-friend") || "Add Friend"}
+              {t("label-add-friend") || "Add Friends"}
             </span>
           )}
         </button>

@@ -16,11 +16,13 @@ import {
 import { User, Conversation } from "./types";
 
 function useInfiniteSearchUsers(search?: string, size = 10) {
+  const queryTerm = search?.trim() ?? "";
   return useInfiniteQuery({
-    queryKey: [UsersQueryKeys.SEARCH_USERS, search ?? "", size],
-    queryFn: ({ pageParam = 0 }) => searchUsers(search, pageParam, size),
+    queryKey: [UsersQueryKeys.SEARCH_USERS, queryTerm, size],
+    queryFn: ({ pageParam = 0 }) => searchUsers(queryTerm, pageParam, size),
     initialPageParam: 0,
     getNextPageParam: (lastPage) => (lastPage.hasMore ? lastPage.page + 1 : undefined),
+    enabled: queryTerm.length > 0,
   });
 }
 

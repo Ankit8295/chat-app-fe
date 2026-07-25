@@ -39,10 +39,13 @@ const messages = {
   "label-users-description": "People on BuzzTown",
   "label-users-loading": "Loading users...",
   "label-users-empty": "No users found.",
-  "label-add-friend": "Add Friend",
-  "placeholder-find-friends": "Find friends...",
+  "label-add-friend": "Add Friends",
+  "placeholder-find-friends": "Find friends by name or email...",
   "label-searching-users": "Searching users...",
   "label-start-chat": "Message",
+  "label-search-friends-prompt": "Search for Friends",
+  "label-search-friends-hint": "Type a name or email address above to search for people on BuzzTown.",
+  "label-no-search-results": "No users found matching your search.",
 
   // General — pages & errors
   "label-not-found": "Not Found",
