@@ -30,7 +30,7 @@ export default function SidebarHeader() {
         title={
           isExpanded ? t("label-collapse-sidebar") : t("label-expand-sidebar")
         }
-        className="hidden lg:flex absolute top-full -translate-y-1/2 right-0 z-20 translate-x-1/2 size-7 cursor-pointer items-center justify-center rounded-full border border-border bg-surface-elevated text-foreground shadow-2xs transform-gpu transition-transform duration-200 hover:bg-primary hover:text-black hover:border-primary hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+        className="hidden lg:flex absolute top-full -translate-y-1/2 right-0 z-20 translate-x-1/2 size-7 cursor-pointer items-center justify-center rounded-full border border-border bg-surface-elevated text-foreground shadow-2xs transform-gpu transition-transform duration-200 hover:bg-primary hover:text-background hover:border-primary hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
       >
         <ArrowIcon
           width={12}

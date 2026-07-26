@@ -28,8 +28,8 @@ const Button = forwardRef<HTMLButtonElement, CustomButtonProps>(function Button(
   const colorClasses = {
     primary:
       variant === "bordered"
-        ? "bg-background border-brand-light text-brand-light"
-        : "bg-brand-light border-brand-light text-white",
+        ? "bg-background border-primary text-primary"
+        : "bg-primary border-primary text-black",
     secondary:
       variant === "bordered"
         ? "bg-background border-foreground text-foreground"

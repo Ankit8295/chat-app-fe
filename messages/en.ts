@@ -90,9 +90,8 @@ const messages = {
   "label-about": "About",
   "label-save": "Save",
   "label-edit": "Edit",
-  "label-about-default": "Tomorrow isn't Promised...",
   "label-name-hint":
-    "This is not your username or pin. This name will be visible to your BuzzTown contacts.",
+    "This is not your username or pin. This name will be visible to your friends.",
   "label-close": "Close",
   "label-loading-profile": "Loading profile...",
   "label-loading-friends": "Loading friends...",

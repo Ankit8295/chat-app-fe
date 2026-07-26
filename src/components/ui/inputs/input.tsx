@@ -87,7 +87,7 @@ const CustomInputBase = forwardRef<HTMLInputElement, CustomInputProps>(
       default:
         "bg-background border border-foreground hover:border-foreground focus:border-foreground rounded-lg",
       bordered:
-        "bg-background border-2 border-brand-light/50 hover:border-brand-light focus-within:border-brand-light rounded-lg",
+        "bg-background border-2 border-primary/50 hover:border-primary focus-within:border-primary rounded-lg",
       underlined: cn(
         "bg-transparent rounded-none transition-colors",
         isReadOnlyOrDisabled
@@ -100,7 +100,7 @@ const CustomInputBase = forwardRef<HTMLInputElement, CustomInputProps>(
       <div
         className={cn(
           "flex flex-col gap-1",
-          variant === "underlined" ? "text-foreground" : "text-brand-light",
+          variant === "underlined" ? "text-foreground" : "text-primary",
           fullWidth ? "w-full" : "w-fit",
           classNames?.base,
         )}
@@ -141,7 +141,7 @@ const CustomInputBase = forwardRef<HTMLInputElement, CustomInputProps>(
               "w-full overflow-hidden bg-transparent text-base font-medium outline-hidden placeholder:text-muted truncate",
               variant === "underlined"
                 ? "px-0 py-1 text-foreground caret-primary"
-                : "px-3 py-2 text-foreground caret-brand-light",
+                : "px-3 py-2 text-foreground caret-primary",
               isReadOnlyOrDisabled && "cursor-pointer select-none",
               leftContent && "pl-0",
               rightContent && "pr-0",
