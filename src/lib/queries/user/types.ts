@@ -3,6 +3,7 @@ export type User = {
   email: string;
   name: string;
   img?: string;
+  about?: string;
 };
 
 export type UserSearchResult = {

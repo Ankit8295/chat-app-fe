@@ -62,7 +62,9 @@ export default function SettingsModal() {
                 value="friends"
                 className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-semibold text-left text-foreground/70 hover:bg-secondary hover:text-foreground transition-all cursor-pointer outline-none data-[state=active]:bg-primary/20 data-[state=active]:text-primary border-l-3 max-sm:border-l-0 max-sm:border-b-3 border-transparent data-[state=active]:border-primary max-sm:flex-1 max-sm:justify-center max-sm:py-2 max-sm:rounded-b-none"
               >
-                <Typography variant="span">{t("label-manage-friends")}</Typography>
+                <Typography variant="span">
+                  {t("label-manage-friends")}
+                </Typography>
               </Tabs.Trigger>
             </Tabs.List>
 
@@ -70,7 +72,7 @@ export default function SettingsModal() {
             {/* PROFILE TAB */}
             <Tabs.Content
               value="profile"
-              className="flex-1 overflow-y-auto pl-2 focus:outline-none flex flex-col items-center justify-center py-6 gap-6 max-sm:pl-0 max-sm:py-2 max-sm:justify-start"
+              className="flex-1 overflow-y-auto  focus:outline-none flex flex-col items-center gap-6  max-sm:justify-start"
             >
               <ProfileTab />
             </Tabs.Content>

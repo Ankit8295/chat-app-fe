@@ -15,7 +15,7 @@ export default function SidebarHeader() {
   return (
     <div
       className={cn(
-        "flex w-full items-center relative px-2 border-b border-border py-[6px] lg:py-3 ",
+        "flex w-full items-center relative px-2 border-b border-border py-3 ",
         isExpanded ? "gap-3 " : "gap-0",
       )}
     >

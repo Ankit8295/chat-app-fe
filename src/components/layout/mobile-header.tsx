@@ -11,7 +11,7 @@ export default function MobileHeader() {
   const toggleSidebar = useLayoutStore((state) => state.toggleSidebar);
 
   return (
-    <header className="flex lg:hidden w-full items-center justify-between border-b border-border bg-surface px-2 py-2.5 shrink-0 z-20 shadow-2xs">
+    <header className="flex lg:hidden w-full items-center justify-between border-b border-border bg-surface px-4 py-2.5 shrink-0 z-20 shadow-2xs">
       {/* Left: App Logo Badge & Name */}
       <div className="flex items-center gap-3">
         <div className="flex size-9 shrink-0 items-center justify-center rounded-xl bg-secondary text-primary border border-border shadow-2xs">

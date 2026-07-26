@@ -4,7 +4,8 @@ import { cn } from "../../../../cn.config";
 
 export type InputVariant = "default" | "bordered" | "underlined";
 
-export interface CustomInputProps extends InputHTMLAttributes<HTMLInputElement> {
+export interface CustomInputProps
+  extends InputHTMLAttributes<HTMLInputElement> {
   label?: ReactNode;
   variant?: InputVariant;
   helperText?: ReactNode;
@@ -41,17 +42,18 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
   ) {
     const variantClasses = {
       default:
-        "bg-background border border-foreground hover:border-foreground focus:border-foreground",
+        "bg-background border border-foreground hover:border-foreground focus:border-foreground rounded-lg",
       bordered:
-        "bg-background border-2 border-brand-light/50 hover:border-brand-light focus-within:border-brand-light",
+        "bg-background border-2 border-brand-light/50 hover:border-brand-light focus-within:border-brand-light rounded-lg",
       underlined:
-        "bg-transparent border-b-2 border-foreground rounded-none hover:border-foreground focus:border-foreground",
+        "bg-transparent border-b-2 border-primary rounded-none focus-within:border-primary hover:border-primary transition-colors pb-1 pt-1",
     };
 
     return (
       <div
         className={cn(
-          "flex flex-col gap-1 text-brand-light",
+          "flex flex-col gap-1",
+          variant === "underlined" ? "text-foreground" : "text-brand-light",
           fullWidth ? "w-full" : "w-fit",
           classNames?.base,
         )}
@@ -59,14 +61,19 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
         {label && (
           <Typography
             variant="span"
-            className={cn("font-bold", classNames?.label)}
+            className={cn(
+              variant === "underlined"
+                ? "text-xs font-semibold text-muted tracking-wide"
+                : "font-bold",
+              classNames?.label,
+            )}
           >
             {label}
           </Typography>
         )}
         <label
           className={cn(
-            "relative flex items-center overflow-hidden rounded-lg transition-all duration-200",
+            "relative flex items-center overflow-hidden transition-all duration-200",
             variantClasses[variant],
             error && "border-error hover:border-error focus:border-error",
             classNames?.inputWrapper,
@@ -82,7 +89,10 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
           <input
             ref={ref}
             className={cn(
-              "w-full overflow-hidden bg-transparent px-3 py-2 text-base font-medium caret-brand-light outline-hidden placeholder:text-foreground/50",
+              "w-full overflow-hidden bg-transparent text-base font-medium outline-hidden placeholder:text-muted",
+              variant === "underlined"
+                ? "px-0 py-1 text-foreground caret-primary"
+                : "px-3 py-2 text-foreground caret-brand-light",
               leftContent && "pl-0",
               rightContent && "pr-0",
               classNames?.input,
@@ -91,7 +101,11 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
           />
           {rightContent && (
             <div
-              className={cn("horizontal-center pr-3", classNames?.rightContent)}
+              className={cn(
+                "horizontal-center gap-2 shrink-0",
+                variant === "underlined" ? "pr-0 pl-2" : "pr-3",
+                classNames?.rightContent,
+              )}
             >
               {rightContent}
             </div>
@@ -100,8 +114,8 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
         {(helperText || error) && (
           <div
             className={cn(
-              "text-sm",
-              error ? "text-error" : "text-foreground/70",
+              "text-xs mt-1",
+              error ? "text-error" : "text-muted",
               classNames?.helperWrapper,
             )}
           >
