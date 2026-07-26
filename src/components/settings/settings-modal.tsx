@@ -23,7 +23,7 @@ export default function SettingsModal() {
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity animate-fade-in" />
 
         {/* Content Box */}
-        <Dialog.Content className="fixed inset-0 m-auto z-50 flex h-[550px] w-full max-w-2xl flex-col rounded-xl border border-border bg-surface-elevated p-6 shadow-2xl outline-none max-sm:h-full max-sm:w-full max-sm:max-h-full max-sm:max-w-none max-sm:m-0 max-sm:rounded-none max-sm:p-4 animate-scale-up">
+        <Dialog.Content className="fixed inset-0 m-auto z-50 flex h-137.5 w-full max-w-2xl flex-col rounded-xl border border-border bg-surface-elevated p-6 shadow-2xl outline-none max-sm:h-full max-sm:w-full max-sm:max-h-full max-sm:max-w-none max-sm:m-0 max-sm:rounded-none max-sm:p-4 animate-scale-up">
           <div className="flex items-center justify-between border-b border-border pb-3 shrink-0">
             <div>
               <Dialog.Title className="text-xl font-bold text-foreground max-sm:text-lg">
@@ -36,7 +36,7 @@ export default function SettingsModal() {
             <Dialog.Close asChild>
               <button
                 type="button"
-                className="rounded-full p-1.5 text-foreground/50 hover:bg-secondary hover:text-foreground transition-colors cursor-pointer outline-none"
+                className="rounded-full p-1.5 text-foreground/50 hover:bg-secondary hover:text-primary transition-colors cursor-pointer outline-none"
                 aria-label={t("label-close")}
               >
                 <XIcon className="size-5" />

@@ -2,8 +2,8 @@
 
 import React, { ReactNode } from "react";
 import { cn } from "../../../cn.config";
-import { getInitials } from "@/utils/string";
 import Typography from "@/components/ui/typography/typography";
+import Avatar from "@/components/ui/avatar/avatar";
 
 export type UserListItemProps = {
   name: string;
@@ -29,24 +29,16 @@ function UserListItemRoot({
   className,
   children,
 }: UserListItemProps) {
-  const initials = getInitials(name || email || "");
-
   return (
     <div
       className={cn(
         "flex items-center justify-between rounded-lg border border-border bg-secondary/20 px-3.5 py-2.5 hover:bg-secondary/35 transition-colors shrink-0 gap-3",
-        className
+        className,
       )}
     >
       {/* Left Column: Avatar + Name & Email */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
-        <span className="flex size-10 items-center justify-center rounded-full bg-secondary text-xs font-semibold text-foreground shrink-0 overflow-hidden">
-          {image ? (
-            <img src={image} alt={name} className="size-full object-cover" />
-          ) : (
-            initials
-          )}
-        </span>
+        <Avatar name={name || email} src={image} size="md" shape="rounded" />
         <div className="min-w-0 flex-1">
           <Typography
             variant="span"
@@ -93,7 +85,7 @@ function UserListItemAction({
           "text-foreground/70 hover:bg-primary/20 hover:text-primary",
         variant === "danger" &&
           "text-foreground/50 hover:bg-destructive/10 hover:text-destructive",
-        className
+        className,
       )}
     >
       {children}

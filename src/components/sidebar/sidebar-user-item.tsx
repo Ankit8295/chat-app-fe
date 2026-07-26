@@ -2,9 +2,8 @@
 
 import { User } from "@/lib/queries/user/types";
 import { cn } from "../../../cn.config";
-import { getInitials } from "@/utils/string";
 import Typography from "@/components/ui/typography/typography";
-import { useTranslations } from "next-intl";
+import Avatar from "@/components/ui/avatar/avatar";
 
 type Props = {
   user: User;
@@ -21,9 +20,6 @@ export default function SidebarUserItem({
   isOnline = false,
   onClick,
 }: Props) {
-  const t = useTranslations();
-  const initials = getInitials(user.name || user.email);
-
   return (
     <button
       type="button"
@@ -31,7 +27,7 @@ export default function SidebarUserItem({
       onClick={onClick}
       className={cn(
         "group relative flex w-full px-2 shrink-0 items-center justify-start gap-3 rounded-lg rounded-tl-none rounded-bl-none outline-none cursor-pointer",
-        isActive && "bg-secondary ",
+        isActive && "bg-secondary",
       )}
     >
       <span
@@ -44,38 +40,21 @@ export default function SidebarUserItem({
         )}
       />
 
-      <span className="relative shrink-0">
-        <span
-          className={cn(
-            "flex size-12 items-center hover:text-primary rounded-full justify-center overflow-hidden bg-secondary text-sm font-semibold text-foreground transition-[border-radius] duration-200 ",
-            isActive && "text-primary",
-          )}
-        >
-          {user.img ? (
-            <img
-              src={user.img}
-              alt={user.name}
-              className="size-full object-cover"
-            />
-          ) : (
-            initials
-          )}
-        </span>
-
-        {isOnline && (
-          <span
-            aria-label={t("label-online")}
-            className="absolute right-0 bottom-0 size-3 rounded-full border-2 border-surface bg-success-text"
-          />
-        )}
-      </span>
+      <Avatar
+        src={user.img}
+        name={user.name || user.email}
+        isActive={isActive}
+        isOnline={isOnline}
+        shape="rounded"
+        size="lg"
+      />
 
       {isExpanded && (
         <Typography
           variant="span"
           className={cn(
-            "min-w-0 flex-1 truncate text-left text-sm font-medium text-foreground",
-            isActive && "text-primary",
+            "min-w-0 flex-1 truncate text-left text-sm font-medium text-foreground transition-colors duration-200 group-hover:text-primary",
+            isActive && "text-primary font-semibold",
           )}
         >
           {user.name}

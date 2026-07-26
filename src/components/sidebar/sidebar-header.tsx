@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { cn } from "../../../cn.config";
 import { useLayoutStore } from "@/store/store";
 import ArrowIcon from "@/icons/arrow";
+import Avatar from "@/components/ui/avatar/avatar";
 
 export default function SidebarHeader() {
   const t = useTranslations();
@@ -15,7 +16,7 @@ export default function SidebarHeader() {
   return (
     <div
       className={cn(
-        "flex w-full items-center relative px-2 border-b border-border py-3 ",
+        "flex w-full items-center relative px-2 border-b border-border py-3 max-lg:py-1.5",
         isExpanded ? "gap-3 " : "gap-0",
       )}
     >
@@ -39,9 +40,11 @@ export default function SidebarHeader() {
         />
       </button>
 
-      <div className="flex p-2 items-center justify-center rounded-xl bg-secondary text-primary ">
-        <Logo className="size-8 text-primary" />
-      </div>
+      <Avatar
+        icon={<Logo className="size-6 text-primary" />}
+        shape="rounded"
+        size="lg"
+      />
 
       {isExpanded && (
         <Typography

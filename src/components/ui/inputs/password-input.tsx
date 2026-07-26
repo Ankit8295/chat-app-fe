@@ -31,14 +31,14 @@ export default function PasswordInput(props: CustomInputProps) {
       variant="bordered"
       rightContent={
         <button
-          className="focus:outline-none"
+          className="focus:outline-none cursor-pointer text-muted hover:text-primary transition-colors shrink-0"
           type="button"
           onClick={toggleVisibility}
         >
           {isVisible ? (
-            <EyeIcon className="text-default-400 pointer-events-none text-2xl" />
+            <EyeIcon className="size-5 fill-current" />
           ) : (
-            <EyeSlashedIcon className="text-default-400 pointer-events-none text-2xl" />
+            <EyeSlashedIcon className="size-5 fill-current" />
           )}
         </button>
       }

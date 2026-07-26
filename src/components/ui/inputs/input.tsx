@@ -1,11 +1,11 @@
 import React, { InputHTMLAttributes, ReactNode, forwardRef } from "react";
 import Typography from "../typography/typography";
+import CheckIcon from "@/icons/check";
 import { cn } from "../../../../cn.config";
 
 export type InputVariant = "default" | "bordered" | "underlined";
 
-export interface CustomInputProps
-  extends InputHTMLAttributes<HTMLInputElement> {
+export interface CustomInputProps extends InputHTMLAttributes<HTMLInputElement> {
   label?: ReactNode;
   variant?: InputVariant;
   helperText?: ReactNode;
@@ -24,7 +24,46 @@ export interface CustomInputProps
   };
 }
 
-const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
+export interface InputRightActionsProps {
+  charsLeft?: number;
+  onSave?: () => void;
+  saveTitle?: string;
+  saveIcon?: ReactNode;
+  children?: ReactNode;
+  className?: string;
+}
+
+export function InputRightActions({
+  charsLeft,
+  onSave,
+  saveTitle,
+  saveIcon,
+  children,
+  className,
+}: InputRightActionsProps) {
+  return (
+    <div className={cn("flex items-center gap-2", className)}>
+      {charsLeft !== undefined && (
+        <span className="text-xs text-muted font-medium select-none">
+          {charsLeft}
+        </span>
+      )}
+      {children}
+      {onSave && (
+        <button
+          type="button"
+          onClick={onSave}
+          className="text-foreground hover:text-primary transition-colors cursor-pointer outline-none"
+          title={saveTitle}
+        >
+          {saveIcon ?? <CheckIcon className="size-5" />}
+        </button>
+      )}
+    </div>
+  );
+}
+
+const CustomInputBase = forwardRef<HTMLInputElement, CustomInputProps>(
   function CustomInput(
     {
       className,
@@ -36,17 +75,25 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
       leftContent,
       rightContent,
       classNames,
+      disabled,
+      readOnly,
       ...rest
     },
     ref,
   ) {
+    const isReadOnlyOrDisabled = disabled || readOnly;
+
     const variantClasses = {
       default:
         "bg-background border border-foreground hover:border-foreground focus:border-foreground rounded-lg",
       bordered:
         "bg-background border-2 border-brand-light/50 hover:border-brand-light focus-within:border-brand-light rounded-lg",
-      underlined:
-        "bg-transparent border-b-2 border-primary rounded-none focus-within:border-primary hover:border-primary transition-colors pb-1 pt-1",
+      underlined: cn(
+        "bg-transparent rounded-none transition-colors",
+        isReadOnlyOrDisabled
+          ? "border-b-2 border-transparent"
+          : "border-b-2 border-primary focus-within:border-primary hover:border-primary",
+      ),
     };
 
     return (
@@ -88,11 +135,14 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
           )}
           <input
             ref={ref}
+            disabled={disabled}
+            readOnly={readOnly}
             className={cn(
-              "w-full overflow-hidden bg-transparent text-base font-medium outline-hidden placeholder:text-muted",
+              "w-full overflow-hidden bg-transparent text-base font-medium outline-hidden placeholder:text-muted truncate",
               variant === "underlined"
                 ? "px-0 py-1 text-foreground caret-primary"
                 : "px-3 py-2 text-foreground caret-brand-light",
+              isReadOnlyOrDisabled && "cursor-pointer select-none",
               leftContent && "pl-0",
               rightContent && "pr-0",
               classNames?.input,
@@ -114,7 +164,7 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
         {(helperText || error) && (
           <div
             className={cn(
-              "text-xs mt-1",
+              "text-xs mt-1 leading-relaxed",
               error ? "text-error" : "text-muted",
               classNames?.helperWrapper,
             )}
@@ -127,6 +177,13 @@ const CustomInput = forwardRef<HTMLInputElement, CustomInputProps>(
   },
 );
 
-CustomInput.displayName = "CustomInput";
+CustomInputBase.displayName = "CustomInput";
+
+type CustomInputType = typeof CustomInputBase & {
+  RightActions: typeof InputRightActions;
+};
+
+const CustomInput = CustomInputBase as CustomInputType;
+CustomInput.RightActions = InputRightActions;
 
 export default CustomInput;

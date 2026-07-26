@@ -111,7 +111,7 @@ export default function AddFriendModal() {
         <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity animate-fade-in" />
 
         {/* Content Box */}
-        <Dialog.Content className="fixed inset-0 m-auto z-50 flex h-[540px] w-full max-w-lg flex-col rounded-xl border border-border bg-surface-elevated p-6 shadow-2xl outline-none max-sm:h-full max-sm:w-full max-sm:max-h-full max-sm:max-w-none max-sm:m-0 max-sm:rounded-none max-sm:p-4 animate-scale-up">
+        <Dialog.Content className="fixed inset-0 m-auto z-50 flex h-135 w-full max-w-lg flex-col rounded-xl border border-border bg-surface-elevated p-6 shadow-2xl outline-none max-sm:h-full max-sm:w-full max-sm:max-h-full max-sm:max-w-none max-sm:m-0 max-sm:rounded-none max-sm:p-4 animate-scale-up">
           {/* Header */}
           <div className="flex items-center justify-between border-b border-border pb-3 shrink-0">
             <div>
@@ -125,7 +125,7 @@ export default function AddFriendModal() {
             <Dialog.Close asChild>
               <button
                 type="button"
-                className="rounded-full p-1.5 text-foreground/50 hover:bg-secondary hover:text-foreground transition-colors cursor-pointer outline-none"
+                className="rounded-full p-1.5 text-foreground/50 hover:bg-secondary hover:text-primary transition-colors cursor-pointer outline-none"
                 aria-label={t("label-close")}
               >
                 <XIcon className="size-5" />
