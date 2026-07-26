@@ -37,10 +37,10 @@ export default function SidebarUserItem({
       <span
         aria-hidden
         className={cn(
-          "absolute left-0 top-1/2 -translate-y-1/2 w-1 rounded-r-full bg-primary transition-all duration-200",
+          "absolute left-0 top-1/2 -translate-y-1/2 w-1 h-full rounded-r-full bg-primary transform-gpu transition-transform duration-200 origin-center will-change-transform",
           isActive
-            ? "h-full opacity-100"
-            : "h-0 opacity-0 group-hover:h-[50%] group-hover:opacity-100",
+            ? "scale-y-100 opacity-100"
+            : "scale-y-0 opacity-0 group-hover:scale-y-50 group-hover:opacity-100",
         )}
       />
 

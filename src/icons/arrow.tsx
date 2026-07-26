@@ -30,7 +30,11 @@ export default function ArrowIcon({
       viewBox="0 0 24 24"
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
-      style={{ transform: getRotation(direction), transition: 'all .2s ease' }}
+      style={{
+        transform: getRotation(direction),
+        transition: 'transform .2s ease',
+        willChange: 'transform',
+      }}
       {...props}
     >
       <path

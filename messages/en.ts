@@ -71,6 +71,10 @@ const messages = {
   // General — UI
   "label-toggle-theme": "Toggle theme",
   "label-word-placeholder": "Word",
+  "label-open-menu": "Open menu",
+  "label-toggle-sidebar": "Toggle sidebar",
+  "label-expand-sidebar": "Expand sidebar",
+  "label-collapse-sidebar": "Collapse sidebar",
 
   // Settings
   "label-settings": "Settings",

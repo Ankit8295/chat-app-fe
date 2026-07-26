@@ -1,0 +1,56 @@
+"use client";
+
+import Typography from "@/components/ui/typography/typography";
+import Logo from "@/icons/logo";
+import { useTranslations } from "next-intl";
+import { cn } from "../../../cn.config";
+import { useLayoutStore } from "@/store/store";
+import ArrowIcon from "@/icons/arrow";
+
+export default function SidebarHeader() {
+  const t = useTranslations();
+  const toggleSidebar = useLayoutStore((state) => state.toggleSidebar);
+  const isExpanded = useLayoutStore((state) => state.isSidebarExpanded);
+
+  return (
+    <div
+      className={cn(
+        "flex w-full items-center relative px-2 border-b border-border py-[6px] lg:py-3 ",
+        isExpanded ? "gap-3 " : "gap-0",
+      )}
+    >
+      {/* Desktop Expander Toggle Button */}
+      <button
+        type="button"
+        onClick={toggleSidebar}
+        aria-label={
+          isExpanded ? t("label-collapse-sidebar") : t("label-expand-sidebar")
+        }
+        title={
+          isExpanded ? t("label-collapse-sidebar") : t("label-expand-sidebar")
+        }
+        className="hidden lg:flex absolute top-full -translate-y-1/2 right-0 z-20 translate-x-1/2 size-7 cursor-pointer items-center justify-center rounded-full border border-border bg-surface-elevated text-foreground shadow-2xs transform-gpu transition-transform duration-200 hover:bg-primary hover:text-black hover:border-primary hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
+      >
+        <ArrowIcon
+          width={12}
+          height={12}
+          direction={isExpanded ? "left" : "right"}
+          className="flex items-center justify-center stroke-current"
+        />
+      </button>
+
+      <div className="flex p-2 items-center justify-center rounded-xl bg-secondary text-primary ">
+        <Logo className="size-8 text-primary" />
+      </div>
+
+      {isExpanded && (
+        <Typography
+          variant="h3"
+          className="min-w-0 flex-1 truncate text-base font-bold text-foreground tracking-tight"
+        >
+          {t("app-name")}
+        </Typography>
+      )}
+    </div>
+  );
+}

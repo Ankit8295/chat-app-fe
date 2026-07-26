@@ -36,8 +36,13 @@ export default function SidebarUserList({
   const { mutate: setUserPreference } = useSetUserPreferences();
   const lastSentIdRef = useRef<string | null>(null);
 
+  const toggleSidebar = useLayoutStore((state) => state.toggleSidebar);
+
   const onConversationClick = (conversation: Conversation) => {
     setActiveConversationId(conversation.id);
+    if (typeof window !== "undefined" && window.innerWidth < 1024 && isExpanded) {
+      toggleSidebar();
+    }
     router.push(ROUTES.CHAT(conversation.id));
   };
 

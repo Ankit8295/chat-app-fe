@@ -1,6 +1,7 @@
 "use client";
 
 import SidebarUserList from "./sidebar-user-list";
+import SidebarHeader from "./sidebar-header";
 import AddFriendModal from "./add-friend-modal";
 import { useGetConversations } from "@/lib/queries/user/query";
 import { useLayoutStore } from "@/store/store";
@@ -26,7 +27,10 @@ export default function AppSidebar({ isExpanded }: Props) {
   const setAddFriendOpen = useLayoutStore((state) => state.setAddFriendOpen);
 
   return (
-    <div className="flex h-full w-full flex-col items-start justify-between gap-2">
+    <div className="flex h-full w-full  flex-col items-start justify-between gap-2">
+      {/* App Logo & Name Header */}
+      <SidebarHeader />
+
       {/* Conversations List */}
       <div className="flex-1 w-full min-h-0">
         <SidebarUserList
@@ -108,7 +112,7 @@ export default function AppSidebar({ isExpanded }: Props) {
                   width={22}
                   height={22}
                   className={cn(
-                    "stroke-current transition-all duration-300 group-hover:rotate-45",
+                    "stroke-current transform-gpu transition-transform duration-300 group-hover:rotate-45",
                     isSettingsOpen ? "text-primary" : "text-foreground",
                   )}
                 />
