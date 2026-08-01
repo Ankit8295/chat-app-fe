@@ -6,8 +6,6 @@ type Props = {
 
 export default function AppLayout({ children }: Props) {
   return (
-    <main className="relative mx-auto h-dvh w-full max-w-[1920px] bg-surface">
-      {children}
-    </main>
+    <main className="relative mx-auto h-dvh w-full bg-surface">{children}</main>
   );
 }

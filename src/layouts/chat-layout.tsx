@@ -28,7 +28,7 @@ export default function ChatLayout({ children }: Props) {
       {/* Sidebar Container */}
       <aside
         className={cn(
-          "bg-surface pb-4 z-40 shrink-0 transform-gpu ease-in-out duration-300",
+          "bg-surface  z-40 shrink-0 transform-gpu ease-in-out duration-300",
           // Below 1024px (max-lg): Fixed overlay drawer layer, hardware-accelerated transform (composite layer, zero reflow)
           "max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:w-[81%] max-lg:border-r max-lg:border-border max-lg:shadow-2xl max-lg:transition-transform max-lg:will-change-transform",
           isExpanded ? "max-lg:translate-x-0" : "max-lg:-translate-x-full",

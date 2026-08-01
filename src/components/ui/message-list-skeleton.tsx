@@ -1,60 +1,58 @@
 "use client";
 
-import { cn } from "../../../cn.config";
+import { useMemo } from "react";
+import MessageSkeleton from "@/components/ui/message-skeleton";
+import { createSeededRandom } from "@/utils/seeded-random";
 
-type SkeletonMessage = {
+type SkeletonMessageItem = {
   id: number;
   isOutgoing: boolean;
-  widthClass: string;
-  heightClass: string;
-  showAvatar?: boolean;
+  group: "single" | "multiple";
 };
 
-const SKELETON_MESSAGES: SkeletonMessage[] = [
-  { id: 1, isOutgoing: false, widthClass: "w-48 max-w-[65%]", heightClass: "h-10", showAvatar: true },
-  { id: 2, isOutgoing: true, widthClass: "w-64 max-w-[70%]", heightClass: "h-12" },
-  { id: 3, isOutgoing: false, widthClass: "w-72 max-w-[75%]", heightClass: "h-16", showAvatar: true },
-  { id: 4, isOutgoing: true, widthClass: "w-40 max-w-[55%]", heightClass: "h-10" },
-  { id: 5, isOutgoing: false, widthClass: "w-56 max-w-[65%]", heightClass: "h-12", showAvatar: true },
-  { id: 6, isOutgoing: true, widthClass: "w-80 max-w-[80%]", heightClass: "h-14" },
-  { id: 7, isOutgoing: false, widthClass: "w-36 max-w-[50%]", heightClass: "h-9", showAvatar: true },
-  { id: 8, isOutgoing: true, widthClass: "w-52 max-w-[60%]", heightClass: "h-10" },
-];
+function createSkeletonMessages(seed: string): SkeletonMessageItem[] {
+  const random = createSeededRandom(seed);
+  const count = 20 + Math.floor(random() * 6);
+  const messages: SkeletonMessageItem[] = [];
 
-export default function MessageListSkeleton() {
+  for (let i = 0; i < count; i++) {
+    const isOutgoing = random() < 0.45;
+    const prev = messages[i - 1];
+    const group =
+      prev && prev.isOutgoing === isOutgoing ? "multiple" : "single";
+
+    messages.push({
+      id: i + 1,
+      isOutgoing,
+      group,
+    });
+  }
+
+  return messages;
+}
+
+type MessageListSkeletonProps = {
+  seed?: string;
+};
+
+export default function MessageListSkeleton({
+  seed = "messages",
+}: MessageListSkeletonProps) {
+  const messages = useMemo(() => createSkeletonMessages(seed), [seed]);
+
   return (
     <div
       aria-label="Loading messages"
-      className="flex h-full w-full flex-col justify-end p-4 md:p-6 gap-4 overflow-hidden animate-pulse select-none"
+      className="flex h-full min-h-0 w-full flex-col overflow-y-auto px-2 pb-20 animate-pulse select-none"
     >
-      {SKELETON_MESSAGES.map((msg) =>
-        msg.isOutgoing ? (
-          /* Outgoing Message Skeleton (Right Aligned) */
-          <div key={msg.id} className="flex w-full justify-end items-end gap-2">
-            <div
-              className={cn(
-                "rounded-2xl rounded-tr-xs bg-primary/20 shrink-0",
-                msg.widthClass,
-                msg.heightClass,
-              )}
-            />
-          </div>
-        ) : (
-          /* Incoming Message Skeleton (Left Aligned with Avatar) */
-          <div key={msg.id} className="flex w-full justify-start items-end gap-2.5">
-            {msg.showAvatar && (
-              <div className="size-8 shrink-0 rounded-xl bg-secondary" />
-            )}
-            <div
-              className={cn(
-                "rounded-2xl rounded-tl-xs bg-secondary shrink-0",
-                msg.widthClass,
-                msg.heightClass,
-              )}
-            />
-          </div>
-        ),
-      )}
+      {messages.map((msg) => (
+        <MessageSkeleton
+          key={msg.id}
+          seed={`${seed}-${msg.id}`}
+          isOutgoing={msg.isOutgoing}
+          group={msg.group}
+        />
+      ))}
     </div>
   );
 }

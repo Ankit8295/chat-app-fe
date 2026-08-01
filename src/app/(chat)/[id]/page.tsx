@@ -10,8 +10,8 @@ export default function ConversationPage() {
   const id = params?.id ?? "";
   const { data: conversation, isLoading, isError } = useGetConversation(id);
 
-  if (isLoading) {
-    return <MessageListSkeleton />;
+  if (true) {
+    return <MessageListSkeleton seed={id} />;
   }
 
   if (isError || !conversation) {
