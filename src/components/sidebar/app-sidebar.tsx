@@ -2,7 +2,6 @@
 
 import SidebarUserList from "./sidebar-user-list";
 import SidebarHeader from "./sidebar-header";
-import AddFriendModal from "./add-friend-modal";
 import { useGetConversations } from "@/lib/queries/user/query";
 import { useLayoutStore } from "@/store/store";
 import SettingsIcon from "@/icons/settings";
@@ -29,10 +28,8 @@ export default function AppSidebar({ isExpanded }: Props) {
 
   return (
     <div className="flex h-full w-full flex-col items-start justify-between gap-2">
-      {/* App Logo & Name Header */}
       <SidebarHeader />
 
-      {/* Conversations List */}
       <div className="flex-1 w-full min-h-0">
         <SidebarUserList
           conversations={conversations}
@@ -41,13 +38,11 @@ export default function AppSidebar({ isExpanded }: Props) {
         />
       </div>
 
-      {/* Sidebar Footer with Add Friend, Settings, and Theme Toggle */}
       <div
         className={cn(
           "w-full border-t border-border py-3 shrink-0 flex flex-col gap-2",
         )}
       >
-        {/* Add Friend Button */}
         <button
           type="button"
           onClick={() => setAddFriendOpen(true)}
@@ -89,7 +84,6 @@ export default function AppSidebar({ isExpanded }: Props) {
           )}
         </button>
 
-        {/* Settings Button & Theme Toggle */}
         <div className="flex w-full items-center justify-between gap-1.5">
           <button
             type="button"
@@ -135,9 +129,6 @@ export default function AppSidebar({ isExpanded }: Props) {
           {isExpanded && <ThemeToggle />}
         </div>
       </div>
-
-      {/* Add Friend Dialog Modal */}
-      <AddFriendModal />
     </div>
   );
 }

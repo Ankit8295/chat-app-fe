@@ -1,15 +1,14 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react";
-import * as Dialog from "@radix-ui/react-dialog";
+import { useState, useEffect, useRef } from "react";
 import { useLayoutStore } from "@/store/store";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import ActionIcon from "@/components/ui/action-icon";
 import SearchIcon from "@/icons/search";
 import Typography from "@/components/ui/typography/typography";
 import InfoBox from "@/components/ui/info-box";
 import { UserListItem } from "@/components/ui/user-list-item";
+import SlidePanel from "@/components/ui/slide-panel";
 import {
   useInfiniteSearchUsers,
   useCreateConversation,
@@ -43,7 +42,6 @@ export default function AddFriendModal() {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
-  // IntersectionObserver attached directly to the scroll container root
   useEffect(() => {
     if (!trimmedQuery || !hasNextPage || isFetchingNextPage) return;
 
@@ -79,7 +77,6 @@ export default function AddFriendModal() {
     data?.pages.length,
   ]);
 
-  // Fallback scroll listener on the container for modal viewports
   const handleScroll = () => {
     const container = scrollContainerRef.current;
     if (!container || !trimmedQuery || !hasNextPage || isFetchingNextPage)
@@ -105,159 +102,128 @@ export default function AddFriendModal() {
   };
 
   return (
-    <Dialog.Root open={isAddFriendOpen} onOpenChange={setAddFriendOpen}>
-      <Dialog.Portal>
-        {/* Overlay */}
-        <Dialog.Overlay className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs transition-opacity animate-fade-in" />
+    <SlidePanel
+      open={isAddFriendOpen}
+      onClose={() => setAddFriendOpen(false)}
+      title={t("label-add-friend")}
+    >
+      <div className="shrink-0 border-b border-border px-2.5 py-3">
+        <div className="relative">
+          <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 size-5 text-muted pointer-events-none" />
+          <input
+            type="text"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder={t("placeholder-find-friends")}
+            className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none transition-colors"
+            autoFocus={isAddFriendOpen}
+          />
+        </div>
+      </div>
 
-        {/* Content Box */}
-        <Dialog.Content className="fixed inset-0 m-auto z-50 flex h-135 w-full max-w-lg flex-col rounded-xl border border-border bg-surface-elevated p-6 shadow-2xl outline-none max-sm:h-full max-sm:w-full max-sm:max-h-full max-sm:max-w-none max-sm:m-0 max-sm:rounded-none max-sm:p-4 animate-scale-up">
-          {/* Header */}
-          <div className="flex items-center justify-between border-b border-border pb-3 shrink-0">
-            <div>
-              <Dialog.Title className="text-xl font-bold text-foreground max-sm:text-lg">
-                {t("label-add-friend")}
-              </Dialog.Title>
-              <Dialog.Description className="sr-only">
-                {t("description-add-friend-modal")}
-              </Dialog.Description>
-            </div>
-            <Dialog.Close asChild>
-              <ActionIcon name="x" label={t("label-close")} />
-            </Dialog.Close>
-          </div>
-
-          {/* Search Bar */}
-          <div className="relative mt-4 shrink-0">
-            <SearchIcon className="absolute left-3.5 top-1/2 -translate-y-1/2 size-5 text-muted pointer-events-none" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder={t("placeholder-find-friends")}
-              className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none transition-colors"
-              autoFocus
+      <div
+        ref={scrollContainerRef}
+        onScroll={handleScroll}
+        className="flex min-h-0 flex-1 flex-col overflow-y-auto px-2.5 py-3"
+      >
+        {!trimmedQuery ? (
+          <div className="my-auto">
+            <InfoBox
+              icon={<SearchIcon className="size-8 stroke-current" />}
+              iconContainerClassName="size-16 bg-secondary text-primary/80"
+              title={t("label-search-friends-prompt")}
+              titleClassName="text-base font-semibold"
+              description={t("label-search-friends-hint")}
+              descriptionClassName="text-xs max-w-xs leading-relaxed"
+              className="p-8 gap-3"
             />
           </div>
+        ) : isLoading ? (
+          <div className="flex flex-col items-center justify-center gap-3 py-12 my-auto">
+            <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+            <Typography variant="span" className="text-muted text-sm">
+              {t("label-searching-users")}
+            </Typography>
+          </div>
+        ) : isError ? (
+          <div className="rounded-lg border border-dashed border-border p-6 text-center my-auto">
+            <Typography variant="span" className="text-muted text-sm">
+              {t("error-fetch-users-failed")}
+            </Typography>
+          </div>
+        ) : allUsers.length === 0 ? (
+          <div className="my-auto rounded-lg border border-dashed border-border">
+            <InfoBox
+              title={t("label-no-search-results")}
+              titleClassName="text-sm font-semibold"
+              description={t("label-no-search-results-hint")}
+              descriptionClassName="text-xs"
+              className="p-8 gap-2"
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <div className="text-xs font-semibold text-muted mb-1 px-1 flex justify-between items-center shrink-0">
+              <Typography variant="span">
+                {t("label-results")} ({totalElements})
+              </Typography>
+            </div>
 
-          {/* Main List / State Container */}
-          <div
-            ref={scrollContainerRef}
-            onScroll={handleScroll}
-            className="flex-1 overflow-y-auto mt-4 pr-1 min-h-0 flex flex-col"
-          >
-            {!trimmedQuery ? (
-              /* Prompt State when no query is typed */
-              <div className="my-auto">
-                <InfoBox
-                  icon={<SearchIcon className="size-8 stroke-current" />}
-                  iconContainerClassName="size-16 bg-secondary text-primary/80"
-                  title={t("label-search-friends-prompt")}
-                  titleClassName="text-base font-semibold"
-                  description={t("label-search-friends-hint")}
-                  descriptionClassName="text-xs max-w-xs leading-relaxed"
-                  className="p-8 gap-3"
-                />
-              </div>
-            ) : isLoading ? (
-              /* Searching Loading State */
-              <div className="flex flex-col items-center justify-center gap-3 py-12 my-auto">
-                <div className="h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
-                <Typography variant="span" className="text-muted text-sm">
-                  {t("label-searching-users")}
-                </Typography>
-              </div>
-            ) : isError ? (
-              /* Error State */
-              <div className="rounded-lg border border-dashed border-border p-6 text-center my-auto">
-                <Typography variant="span" className="text-muted text-sm">
-                  {t("error-fetch-users-failed")}
-                </Typography>
-              </div>
-            ) : allUsers.length === 0 ? (
-              /* No Results State */
-              <div className="my-auto rounded-lg border border-dashed border-border">
-                <InfoBox
-                  title={t("label-no-search-results")}
-                  titleClassName="text-sm font-semibold"
-                  description={t("label-no-search-results-hint")}
-                  descriptionClassName="text-xs"
-                  className="p-8 gap-2"
-                />
-              </div>
-            ) : (
-              /* Results List with Infinite Scrolling */
-              <div className="flex flex-col gap-2">
-                <div className="text-xs font-semibold text-muted mb-1 px-1 flex justify-between items-center shrink-0">
+            {allUsers.map((user) => {
+              const isPendingThisUser =
+                createConversation.isPending &&
+                createConversation.variables === user.id;
+
+              return (
+                <UserListItem
+                  key={user.id}
+                  name={user.name}
+                  email={user.email}
+                  image={user.img}
+                >
+                  {isPendingThisUser ? (
+                    <div
+                      aria-label={t("label-start-chat")}
+                      className="inline-flex size-8 shrink-0 items-center justify-center rounded-xl"
+                    >
+                      <div className="size-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                    </div>
+                  ) : (
+                    <UserListItem.Action
+                      name="message"
+                      label={t("label-start-chat")}
+                      disabled={isPendingThisUser}
+                      onClick={() => handleStartChat(user.id)}
+                    />
+                  )}
+                </UserListItem>
+              );
+            })}
+
+            <div
+              ref={loadMoreRef}
+              className="py-3 flex items-center justify-center shrink-0"
+            >
+              {isFetchingNextPage ? (
+                <div className="flex items-center gap-2 text-xs text-muted">
+                  <div className="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                   <Typography variant="span">
-                    {t("label-results")} ({totalElements})
+                    {t("label-loading-more-users")}
                   </Typography>
                 </div>
-
-                {allUsers.map((user) => {
-                  const isPendingThisUser =
-                    createConversation.isPending &&
-                    createConversation.variables === user.id;
-
-                  return (
-                    <UserListItem
-                      key={user.id}
-                      name={user.name}
-                      email={user.email}
-                      image={user.img}
-                    >
-                      {isPendingThisUser ? (
-                        <div
-                          aria-label={t("label-start-chat")}
-                          className="inline-flex size-8 shrink-0 items-center justify-center rounded-xl"
-                        >
-                          <div className="size-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                        </div>
-                      ) : (
-                        <UserListItem.Action
-                          name="message"
-                          label={t("label-start-chat")}
-                          disabled={isPendingThisUser}
-                          onClick={() => handleStartChat(user.id)}
-                        />
-                      )}
-                    </UserListItem>
-                  );
-                })}
-
-                {/* Infinite Scroll Trigger Sentinel & Loading Indicator */}
-                <div
-                  ref={loadMoreRef}
-                  className="py-3 flex items-center justify-center shrink-0"
-                >
-                  {isFetchingNextPage ? (
-                    <div className="flex items-center gap-2 text-xs text-muted">
-                      <div className="size-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                      <Typography variant="span">
-                        {t("label-loading-more-users")}
-                      </Typography>
-                    </div>
-                  ) : hasNextPage ? (
-                    <Typography
-                      variant="span"
-                      className="text-xs text-muted/60"
-                    >
-                      {t("label-scroll-for-more")}
-                    </Typography>
-                  ) : (
-                    <Typography
-                      variant="span"
-                      className="text-xs text-muted/40"
-                    >
-                      {t("label-end-of-results")}
-                    </Typography>
-                  )}
-                </div>
-              </div>
-            )}
+              ) : hasNextPage ? (
+                <Typography variant="span" className="text-xs text-muted/60">
+                  {t("label-scroll-for-more")}
+                </Typography>
+              ) : (
+                <Typography variant="span" className="text-xs text-muted/40">
+                  {t("label-end-of-results")}
+                </Typography>
+              )}
+            </div>
           </div>
-        </Dialog.Content>
-      </Dialog.Portal>
-    </Dialog.Root>
+        )}
+      </div>
+    </SlidePanel>
   );
 }

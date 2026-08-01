@@ -1,6 +1,7 @@
 "use client";
 
 import AppSidebar from "@/components/sidebar/app-sidebar";
+import AddFriendModal from "@/components/sidebar/add-friend-modal";
 import SettingsModal from "@/components/settings/settings-modal";
 import MobileHeader from "@/components/layout/mobile-header";
 import { useLayoutStore } from "@/store/store";
@@ -27,10 +28,8 @@ export default function ChatLayout({ children }: Props) {
       <aside
         className={cn(
           "bg-surface z-40 shrink-0 transform-gpu ease-in-out duration-300",
-          // Mobile: full-width overlay drawer
           "max-lg:fixed max-lg:inset-y-0 max-lg:left-0 max-lg:w-full max-lg:shadow-2xl max-lg:transition-transform max-lg:will-change-transform",
           isExpanded ? "max-lg:translate-x-0" : "max-lg:-translate-x-full",
-          // Desktop: inline sidebar column
           "lg:relative lg:inset-auto lg:translate-x-0 lg:border-r lg:border-border lg:shadow-none lg:transition-[width,transform] lg:will-change-[width,transform]",
           isExpanded ? "lg:w-[max(20%,250px)]" : "lg:w-16",
         )}
@@ -44,6 +43,7 @@ export default function ChatLayout({ children }: Props) {
         <div className="flex-1 overflow-auto min-w-0">{children}</div>
       </div>
 
+      <AddFriendModal />
       <SettingsModal />
     </div>
   );

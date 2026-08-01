@@ -3,8 +3,8 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "../../../cn.config";
-import ActionIcon from "@/components/ui/action-icon";
 import Avatar from "@/components/ui/avatar/avatar";
+import PanelHeader from "@/components/ui/panel-header";
 import Typography from "@/components/ui/typography/typography";
 import UserListItem from "@/components/ui/user-list-item";
 import ConversationInfoRow from "@/components/conversation/conversation-info-row";
@@ -82,17 +82,12 @@ export default function ConversationInfo({
             !open && "lg:invisible",
           )}
         >
-          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-2.5 py-3.5">
-            <div className="flex min-w-0 items-center gap-2">
-              <Typography
-                variant="h2"
-                className="truncate text-base font-semibold text-foreground"
-              >
-                {isDirect ? t("label-friend-info") : t("label-group-info")}
-              </Typography>
-            </div>
-            <ActionIcon name="x" label={t("label-close")} onClick={onClose} />
-          </div>
+          <PanelHeader
+            title={
+              isDirect ? t("label-friend-info") : t("label-group-info")
+            }
+            onClose={onClose}
+          />
 
           <div className="min-h-0 flex-1 overflow-y-auto">
             <div className="flex flex-col items-center gap-3 border-b border-border px-4 py-8">
