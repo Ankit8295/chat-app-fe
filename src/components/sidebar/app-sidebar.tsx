@@ -5,10 +5,13 @@ import SidebarHeader from "./sidebar-header";
 import { useGetConversations } from "@/lib/queries/user/query";
 import { useLayoutStore } from "@/store/store";
 import SettingsIcon from "@/icons/settings";
+import MessageIcon from "@/icons/message-icon";
+import UsersIcon from "@/icons/users";
 import AddIcon from "@/icons/add";
 import ThemeToggle from "@/components/ui/theme-toggle";
 import Typography from "@/components/ui/typography/typography";
 import Avatar from "@/components/ui/avatar/avatar";
+import DropdownMenu from "@/components/ui/dropdown-menu";
 import { useTranslations } from "next-intl";
 import { cn } from "../../../cn.config";
 
@@ -23,8 +26,12 @@ export default function AppSidebar({ isExpanded }: Props) {
   const isSettingsOpen = useLayoutStore((state) => state.isSettingsOpen);
   const setSettingsOpen = useLayoutStore((state) => state.setSettingsOpen);
 
-  const isAddFriendOpen = useLayoutStore((state) => state.isAddFriendOpen);
-  const setAddFriendOpen = useLayoutStore((state) => state.setAddFriendOpen);
+  const isNewChatOpen = useLayoutStore((state) => state.isNewChatOpen);
+  const setNewChatOpen = useLayoutStore((state) => state.setNewChatOpen);
+  const isNewGroupOpen = useLayoutStore((state) => state.isNewGroupOpen);
+  const setNewGroupOpen = useLayoutStore((state) => state.setNewGroupOpen);
+
+  const isComposeOpen = isNewChatOpen || isNewGroupOpen;
 
   return (
     <div className="flex h-full w-full flex-col items-start justify-between gap-2">
@@ -43,46 +50,64 @@ export default function AppSidebar({ isExpanded }: Props) {
           "w-full border-t border-border py-3 shrink-0 flex flex-col gap-2",
         )}
       >
-        <button
-          type="button"
-          onClick={() => setAddFriendOpen(true)}
-          className={cn(
-            "group relative flex shrink-0 items-center justify-start gap-3 rounded-lg outline-none cursor-pointer",
-            isAddFriendOpen && "bg-secondary",
-            isExpanded ? "flex-1 px-2 " : "w-full px-2",
-          )}
-          title={t("label-add-friend")}
-        >
-          <Avatar
-            icon={
-              <AddIcon
-                width={22}
-                height={22}
-                className={cn(
-                  "stroke-current transition-colors duration-200",
-                  isAddFriendOpen
-                    ? "text-primary"
-                    : "text-foreground group-hover:text-primary",
-                )}
-              />
-            }
-            isActive={isAddFriendOpen}
-            shape="rounded"
-            size="lg"
-          />
-
-          {isExpanded && (
-            <Typography
-              variant="span"
+        <DropdownMenu>
+          <DropdownMenu.Trigger asChild>
+            <button
+              type="button"
               className={cn(
-                "min-w-0 flex-1 truncate text-left text-sm font-medium text-foreground transition-colors duration-200 group-hover:text-primary",
-                isAddFriendOpen && "text-primary font-semibold",
+                "group relative flex w-full shrink-0 items-center justify-start gap-3 rounded-lg outline-none cursor-pointer",
+                isComposeOpen && "bg-secondary",
+                isExpanded ? "px-2" : "px-2",
               )}
+              title={t("label-new-chat")}
             >
-              {t("label-add-friend")}
-            </Typography>
-          )}
-        </button>
+              <Avatar
+                icon={
+                  <AddIcon
+                    width={22}
+                    height={22}
+                    className={cn(
+                      "stroke-current transition-colors duration-200",
+                      isComposeOpen
+                        ? "text-primary"
+                        : "text-foreground group-hover:text-primary",
+                    )}
+                  />
+                }
+                isActive={isComposeOpen}
+                shape="rounded"
+                size="lg"
+              />
+
+              {isExpanded && (
+                <Typography
+                  variant="span"
+                  className={cn(
+                    "min-w-0 flex-1 truncate text-left text-sm font-medium text-foreground transition-colors duration-200 group-hover:text-primary",
+                    isComposeOpen && "text-primary font-semibold",
+                  )}
+                >
+                  {t("label-new-chat")}
+                </Typography>
+              )}
+            </button>
+          </DropdownMenu.Trigger>
+
+          <DropdownMenu.Content side="top" align="start" className="min-w-52">
+            <DropdownMenu.Item
+              icon={<MessageIcon className="size-5" />}
+              onSelect={() => setNewChatOpen(true)}
+            >
+              {t("label-new-chat")}
+            </DropdownMenu.Item>
+            <DropdownMenu.Item
+              icon={<UsersIcon className="size-5" />}
+              onSelect={() => setNewGroupOpen(true)}
+            >
+              {t("label-new-group")}
+            </DropdownMenu.Item>
+          </DropdownMenu.Content>
+        </DropdownMenu>
 
         <div className="flex w-full items-center justify-between gap-1.5">
           <button

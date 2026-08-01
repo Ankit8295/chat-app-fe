@@ -54,9 +54,18 @@ export type ConversationDetail = {
   updatedAt: string;
 };
 
-export type CreateConversationRequest = {
-  userId: string;
-};
+export type CreateConversationRequest =
+  | {
+      type: "DIRECT";
+      userId: string;
+    }
+  | {
+      type: "GROUP";
+      name: string;
+      about?: string;
+      image?: string | null;
+      participants: string[];
+    };
 
 export type UserPreference = {
   userId: string;

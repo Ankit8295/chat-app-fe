@@ -14,6 +14,8 @@ export type UserListItemProps = {
   image?: string;
   className?: string;
   children?: ReactNode;
+  selected?: boolean;
+  onClick?: () => void;
 };
 
 function UserListItemRoot({
@@ -22,14 +24,11 @@ function UserListItemRoot({
   image,
   className,
   children,
+  selected = false,
+  onClick,
 }: UserListItemProps) {
-  return (
-    <div
-      className={cn(
-        "flex items-center justify-between rounded-lg border border-border bg-secondary/20 px-3.5 py-2.5 hover:bg-secondary/35 transition-colors shrink-0 gap-3",
-        className,
-      )}
-    >
+  const content = (
+    <>
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <Avatar name={name || email} src={image} size="md" shape="rounded" />
         <div className="min-w-0 flex-1">
@@ -53,8 +52,27 @@ function UserListItemRoot({
       {children && (
         <div className="flex items-center gap-1 shrink-0">{children}</div>
       )}
-    </div>
+    </>
   );
+
+  const rowClassName = cn(
+    "flex w-full items-center justify-between rounded-lg border px-3.5 py-2.5 transition-colors shrink-0 gap-3 text-left outline-none",
+    selected
+      ? "border-primary/40 bg-primary/10"
+      : "border-border bg-secondary/20 hover:bg-secondary/35",
+    onClick && "cursor-pointer",
+    className,
+  );
+
+  if (onClick) {
+    return (
+      <button type="button" onClick={onClick} className={rowClassName}>
+        {content}
+      </button>
+    );
+  }
+
+  return <div className={rowClassName}>{content}</div>;
 }
 
 function UserListItemAction(props: ActionIconProps) {

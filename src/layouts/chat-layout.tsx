@@ -1,7 +1,8 @@
 "use client";
 
 import AppSidebar from "@/components/sidebar/app-sidebar";
-import AddFriendModal from "@/components/sidebar/add-friend-modal";
+import NewChatModal from "@/components/sidebar/new-chat-modal";
+import NewGroupModal from "@/components/sidebar/new-group-modal";
 import SettingsModal from "@/components/settings/settings-modal";
 import MobileHeader from "@/components/layout/mobile-header";
 import { useLayoutStore } from "@/store/store";
@@ -43,7 +44,8 @@ export default function ChatLayout({ children }: Props) {
         <div className="flex-1 overflow-auto min-w-0">{children}</div>
       </div>
 
-      <AddFriendModal />
+      <NewChatModal />
+      <NewGroupModal />
       <SettingsModal />
     </div>
   );

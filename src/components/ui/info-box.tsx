@@ -28,7 +28,7 @@ export function InfoBox({
   return (
     <div
       className={cn(
-        "flex h-full w-full flex-col items-center justify-center gap-4 p-6 text-center",
+        "flex h-fit w-full flex-col items-center justify-center gap-4 p-6 text-center",
         className,
       )}
     >

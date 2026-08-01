@@ -1,6 +1,15 @@
 import { API_ROUTES } from "@/lib/api/api-routes";
 import { axiosClient } from "@/lib/api/axios-client";
-import { User, UserSearchResult, Friend, Conversation, ConversationDetail, PageResponse, UserPreference } from "./types";
+import {
+  User,
+  UserSearchResult,
+  Friend,
+  Conversation,
+  ConversationDetail,
+  PageResponse,
+  UserPreference,
+  CreateConversationRequest,
+} from "./types";
 
 export async function searchUsers(search?: string, page = 0, size = 10): Promise<PageResponse<UserSearchResult>> {
   try {
@@ -60,11 +69,11 @@ export async function getConversationById(conversationId: string) {
   }
 }
 
-export async function createConversation(userId: string) {
+export async function createConversation(request: CreateConversationRequest) {
   try {
     const response = await axiosClient.post<Conversation>(
       API_ROUTES.conversations.createConversation,
-      { userId }
+      request
     );
     return response.data;
   } catch (error) {

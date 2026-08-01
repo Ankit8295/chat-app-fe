@@ -37,14 +37,31 @@ const messages = {
     "Failed to load friends list. Please try again.",
 
   // Users, Friends & Conversations
-  "label-add-friend": "Add Friends",
-  "description-add-friend-modal": "Find friends and start new conversations.",
-  "placeholder-find-friends": "Find friends by name or email...",
+  "label-new-chat": "New chat",
+  "label-new-group": "New group",
+  "label-create-group": "Create group",
+  "label-group-name": "Group name",
+  "placeholder-group-name": "Enter group name",
+  "label-group-about": "About",
+  "placeholder-group-about": "What is this group about?",
+  "label-add-participants": "Add participants",
+  "label-participants-selected": "{count} selected",
+  "label-search-participants-prompt": "Find people to add",
+  "label-search-participants-hint":
+    "Search by name or email to add people to this group.",
+  "aria-change-group-image": "Change group image",
+  "aria-remove-participant": "Remove {name}",
+  "validation-group-name-min": "Group name must be at least 2 characters.",
+  "validation-group-name-max": "Group name must be at most 50 characters.",
+  "validation-group-about-max": "About must be at most 200 characters.",
+  "validation-group-participants-min": "Select at least one participant.",
+  "description-new-chat-modal": "Search for people and start a conversation.",
+  "placeholder-find-people": "Search by name or email...",
   "label-searching-users": "Searching users...",
   "label-start-chat": "Message",
-  "label-search-friends-prompt": "Search for Friends",
-  "label-search-friends-hint":
-    "Type a name or email address above to search for people on BuzzTown.",
+  "label-search-people-prompt": "Find someone to chat with",
+  "label-search-people-hint":
+    "Type a name or email above to find people on BuzzTown and start chatting.",
   "label-no-search-results": "No users found matching your search.",
   "label-no-search-results-hint":
     "Try searching with a different name or email address.",
@@ -59,7 +76,7 @@ const messages = {
   "label-online": "Online",
   "label-no-conversation-selected": "Select a conversation",
   "description-no-conversation-selected":
-    "Choose a conversation from the sidebar or add a friend to start chatting.",
+    "Choose a conversation from the sidebar or start a new chat.",
   "label-conversation-not-found": "Conversation not found",
   "description-conversation-not-found":
     "This conversation doesn't exist or you don't have access to it.",

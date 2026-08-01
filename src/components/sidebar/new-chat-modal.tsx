@@ -15,12 +15,12 @@ import {
 } from "@/lib/queries/user/query";
 import { ROUTES } from "../../../routes.config";
 
-export default function AddFriendModal() {
+export default function NewChatModal() {
   const t = useTranslations();
   const router = useRouter();
 
-  const isAddFriendOpen = useLayoutStore((state) => state.isAddFriendOpen);
-  const setAddFriendOpen = useLayoutStore((state) => state.setAddFriendOpen);
+  const isNewChatOpen = useLayoutStore((state) => state.isNewChatOpen);
+  const setNewChatOpen = useLayoutStore((state) => state.setNewChatOpen);
   const setActiveConversationId = useLayoutStore(
     (state) => state.setActiveConversationId,
   );
@@ -92,20 +92,23 @@ export default function AddFriendModal() {
   const totalElements = data?.pages[0]?.totalElements ?? 0;
 
   const handleStartChat = (targetUserId: string) => {
-    createConversation.mutate(targetUserId, {
-      onSuccess: (conversation) => {
-        setAddFriendOpen(false);
-        setActiveConversationId(conversation.id);
-        router.push(ROUTES.CONVERSATION(conversation.id));
+    createConversation.mutate(
+      { type: "DIRECT", userId: targetUserId },
+      {
+        onSuccess: (conversation) => {
+          setNewChatOpen(false);
+          setActiveConversationId(conversation.id);
+          router.push(ROUTES.CONVERSATION(conversation.id));
+        },
       },
-    });
+    );
   };
 
   return (
     <SlidePanel
-      open={isAddFriendOpen}
-      onClose={() => setAddFriendOpen(false)}
-      title={t("label-add-friend")}
+      open={isNewChatOpen}
+      onClose={() => setNewChatOpen(false)}
+      title={t("label-new-chat")}
     >
       <div className="shrink-0 border-b border-border px-2.5 py-3">
         <div className="relative">
@@ -114,9 +117,9 @@ export default function AddFriendModal() {
             type="text"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder={t("placeholder-find-friends")}
+            placeholder={t("placeholder-find-people")}
             className="w-full rounded-lg border border-border bg-background py-2.5 pl-10 pr-4 text-sm text-foreground placeholder:text-muted focus:border-primary focus:outline-none transition-colors"
-            autoFocus={isAddFriendOpen}
+            autoFocus={isNewChatOpen}
           />
         </div>
       </div>
@@ -131,9 +134,9 @@ export default function AddFriendModal() {
             <InfoBox
               icon={<SearchIcon className="size-8 stroke-current" />}
               iconContainerClassName="size-16 bg-secondary text-primary/80"
-              title={t("label-search-friends-prompt")}
+              title={t("label-search-people-prompt")}
               titleClassName="text-base font-semibold"
-              description={t("label-search-friends-hint")}
+              description={t("label-search-people-hint")}
               descriptionClassName="text-xs max-w-xs leading-relaxed"
               className="p-8 gap-3"
             />
@@ -172,7 +175,8 @@ export default function AddFriendModal() {
             {allUsers.map((user) => {
               const isPendingThisUser =
                 createConversation.isPending &&
-                createConversation.variables === user.id;
+                createConversation.variables?.type === "DIRECT" &&
+                createConversation.variables.userId === user.id;
 
               return (
                 <UserListItem

@@ -16,7 +16,7 @@ import {
   getUserPreferences,
   setUserPreferences,
 } from "./api";
-import { User, Conversation, ConversationDetail, UserPreference } from "./types";
+import { User, Conversation, ConversationDetail, UserPreference, CreateConversationRequest } from "./types";
 
 function useInfiniteSearchUsers(search?: string, size = 10) {
   const queryTerm = search?.trim() ?? "";
@@ -59,8 +59,8 @@ function useGetConversation(conversationId: string) {
 function useCreateConversation() {
   const queryClient = useQueryClient();
 
-  return useMutation<Conversation, Error, string>({
-    mutationFn: (userId: string) => createConversation(userId),
+  return useMutation<Conversation, Error, CreateConversationRequest>({
+    mutationFn: (request) => createConversation(request),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [UsersQueryKeys.CONVERSATIONS] });
       queryClient.invalidateQueries({ queryKey: [UsersQueryKeys.FRIENDS] });
