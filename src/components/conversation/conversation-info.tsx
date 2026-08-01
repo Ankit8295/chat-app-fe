@@ -83,7 +83,7 @@ export default function ConversationInfo({
             !open && "lg:invisible",
           )}
         >
-          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-3 py-2.5">
+          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-2.5 py-2">
             <div className="flex min-w-0 items-center gap-2">
               <Typography
                 variant="h2"
@@ -126,7 +126,7 @@ export default function ConversationInfo({
               )}
             </div>
 
-            <div className="flex hidden items-center justify-center gap-8 border-b border-border px-4 py-5">
+            <div className="flex  items-center justify-center gap-8 border-b border-border px-4 py-5">
               <QuickAction
                 icon={<PhoneIcon className="size-5" />}
                 label={t("label-voice")}
