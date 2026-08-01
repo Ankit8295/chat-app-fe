@@ -5,7 +5,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import * as Tabs from "@radix-ui/react-tabs";
 import { useLayoutStore } from "@/store/store";
 import { useTranslations } from "next-intl";
-import XIcon from "@/icons/x";
+import ActionIcon from "@/components/ui/action-icon";
 import Typography from "@/components/ui/typography/typography";
 import ProfileTab from "./profile-tab";
 import FriendsTab from "./friends-tab";
@@ -34,13 +34,7 @@ export default function SettingsModal() {
               </Dialog.Description>
             </div>
             <Dialog.Close asChild>
-              <button
-                type="button"
-                className="rounded-full p-1.5 text-foreground/50 hover:bg-secondary hover:text-primary transition-colors cursor-pointer outline-none"
-                aria-label={t("label-close")}
-              >
-                <XIcon className="size-5" />
-              </button>
+              <ActionIcon name="x" label={t("label-close")} />
             </Dialog.Close>
           </div>
 

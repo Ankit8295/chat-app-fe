@@ -3,6 +3,7 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "../../../cn.config";
+import ActionIcon from "@/components/ui/action-icon";
 import Avatar from "@/components/ui/avatar/avatar";
 import Typography from "@/components/ui/typography/typography";
 import UserListItem from "@/components/ui/user-list-item";
@@ -13,12 +14,10 @@ import ClearIcon from "@/icons/clear";
 import HeartIcon from "@/icons/heart";
 import LockIcon from "@/icons/lock";
 import MediaIcon from "@/icons/media";
-import PencilIcon from "@/icons/pencil";
 import PhoneIcon from "@/icons/phone";
 import SearchIcon from "@/icons/search";
 import TrashIcon from "@/icons/trash";
 import VideoIcon from "@/icons/video";
-import XIcon from "@/icons/x";
 
 type ConversationInfoProps = {
   conversation: ConversationDetail;
@@ -92,14 +91,11 @@ export default function ConversationInfo({
                 {isDirect ? t("label-friend-info") : t("label-group-info")}
               </Typography>
             </div>
-            <button
-              type="button"
+            <ActionIcon
+              name="x"
+              label={t("label-close")}
               onClick={onClose}
-              aria-label={t("label-close")}
-              className="flex size-10 shrink-0 items-center justify-center rounded-xl text-foreground/70 hover:bg-secondary hover:text-primary transition-colors cursor-pointer outline-none"
-            >
-              <XIcon className="size-5" />
-            </button>
+            />
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto">

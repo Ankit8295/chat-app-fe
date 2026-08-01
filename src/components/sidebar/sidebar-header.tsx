@@ -1,12 +1,12 @@
 "use client";
 
+import ActionIcon from "@/components/ui/action-icon";
 import Typography from "@/components/ui/typography/typography";
 import Logo from "@/icons/logo";
 import { useTranslations } from "next-intl";
 import { cn } from "../../../cn.config";
 import { useLayoutStore } from "@/store/store";
 import ArrowIcon from "@/icons/arrow";
-import XIcon from "@/icons/x";
 import Avatar from "@/components/ui/avatar/avatar";
 
 export default function SidebarHeader() {
@@ -55,15 +55,12 @@ export default function SidebarHeader() {
         </Typography>
       )}
 
-      <button
-        type="button"
+      <ActionIcon
+        name="x"
+        label={t("label-close")}
         onClick={toggleSidebar}
-        aria-label={t("label-close")}
-        title={t("label-close")}
-        className="ml-auto flex size-10 shrink-0 items-center justify-center rounded-xl text-foreground/70 hover:bg-secondary hover:text-primary transition-colors cursor-pointer outline-none lg:hidden"
-      >
-        <XIcon className="size-5" />
-      </button>
+        className="ml-auto lg:hidden"
+      />
     </div>
   );
 }
