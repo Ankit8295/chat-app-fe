@@ -63,6 +63,10 @@ const messages = {
   "label-conversation-not-found": "Conversation not found",
   "description-conversation-not-found":
     "This conversation doesn't exist or you don't have access to it.",
+  "placeholder-type-message": "Type a message",
+  "aria-attach-file": "Attach a file",
+  "aria-open-emoji": "Open emoji picker",
+  "aria-send-message": "Send message",
 
   // General — pages & errors
   "label-not-found": "Not Found",
