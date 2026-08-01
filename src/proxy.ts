@@ -21,17 +21,20 @@ export default async function proxy(req: NextRequest) {
 
   if (path === "/" && isAuthenticated) {
     try {
-      const response = await fetch(`${BACKEND_URL}/api/v1/users/me/preferences`, {
-        headers: {
-          Cookie: `${AUTH_COOKIE_NAME}=${token}`,
+      const response = await fetch(
+        `${BACKEND_URL}/api/v1/users/me/preferences`,
+        {
+          headers: {
+            Cookie: `${AUTH_COOKIE_NAME}=${token}`,
+          },
         },
-      });
+      );
 
       if (response.ok) {
         const data = await response.json();
         if (data?.lastConversationId) {
           return NextResponse.redirect(
-            new URL(`/user/${data.lastConversationId}`, req.nextUrl)
+            new URL(`/${data.lastConversationId}`, req.nextUrl),
           );
         }
       }

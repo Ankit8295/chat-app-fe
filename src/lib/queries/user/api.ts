@@ -1,6 +1,6 @@
 import { API_ROUTES } from "@/lib/api/api-routes";
 import { axiosClient } from "@/lib/api/axios-client";
-import { User, UserSearchResult, Friend, Conversation, PageResponse, UserPreference } from "./types";
+import { User, UserSearchResult, Friend, Conversation, ConversationDetail, PageResponse, UserPreference } from "./types";
 
 export async function searchUsers(search?: string, page = 0, size = 10): Promise<PageResponse<UserSearchResult>> {
   try {
@@ -45,6 +45,18 @@ export async function getConversations() {
   } catch (error) {
     console.error("error fetching conversations", error);
     throw new Error("Failed to fetch conversations");
+  }
+}
+
+export async function getConversationById(conversationId: string) {
+  try {
+    const response = await axiosClient.get<ConversationDetail>(
+      API_ROUTES.conversations.getConversationById(conversationId)
+    );
+    return response.data;
+  } catch (error) {
+    console.error("error fetching conversation", error);
+    throw new Error("Failed to fetch conversation");
   }
 }
 

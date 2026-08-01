@@ -2,6 +2,7 @@ export type User = {
   id: string;
   email: string;
   name: string;
+  image?: string | null;
   img?: string;
   about?: string;
 };
@@ -27,9 +28,28 @@ export type Friend = {
 export type Conversation = {
   id: string;
   type: "direct" | "group";
-  name?: string;
-  image?: string;
-  friendId?: string;
+  name?: string | null;
+  image?: string | null;
+  createdBy?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
+
+export type ConversationParticipant = {
+  id: string;
+  name: string;
+  image?: string | null;
+  joinedAt: string;
+};
+
+export type ConversationDetail = {
+  id: string;
+  type: "direct" | "group";
+  name?: string | null;
+  image?: string | null;
+  friend: ConversationParticipant | null;
+  participants: ConversationParticipant[];
+  createdBy?: string | null;
   createdAt: string;
   updatedAt: string;
 };

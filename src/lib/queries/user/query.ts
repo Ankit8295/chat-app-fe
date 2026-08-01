@@ -9,13 +9,14 @@ import {
   searchUsers,
   getFriendsOnly,
   getConversations,
+  getConversationById,
   createConversation,
   getFriendById,
   getMe,
   getUserPreferences,
   setUserPreferences,
 } from "./api";
-import { User, Conversation, UserPreference } from "./types";
+import { User, Conversation, ConversationDetail, UserPreference } from "./types";
 
 function useInfiniteSearchUsers(search?: string, size = 10) {
   const queryTerm = search?.trim() ?? "";
@@ -42,6 +43,16 @@ function useGetConversations() {
     queryKey: [UsersQueryKeys.CONVERSATIONS],
     queryFn: getConversations,
     staleTime: Infinity,
+  });
+}
+
+function useGetConversation(conversationId: string) {
+  return useQuery<ConversationDetail>({
+    queryKey: [UsersQueryKeys.CONVERSATION, conversationId],
+    queryFn: () => getConversationById(conversationId),
+    enabled: !!conversationId,
+    staleTime: Infinity,
+    retry: false,
   });
 }
 
@@ -97,6 +108,7 @@ export {
   useInfiniteSearchUsers,
   useInfiniteGetFriendsOnly,
   useGetConversations,
+  useGetConversation,
   useCreateConversation,
   useGetMe,
   useGetFriend,

@@ -6,10 +6,11 @@ import Typography from "@/components/ui/typography/typography";
 import Avatar from "@/components/ui/avatar/avatar";
 
 type Props = {
-  user: User;
+  user?: User;
   isActive?: boolean;
   isExpanded?: boolean;
   isOnline?: boolean;
+  isLoading?: boolean;
   onClick?: () => void;
 };
 
@@ -18,8 +19,21 @@ export default function SidebarUserItem({
   isActive = false,
   isExpanded = false,
   isOnline = false,
+  isLoading = false,
   onClick,
 }: Props) {
+  if (isLoading) {
+    return (
+      <div className="flex w-full shrink-0 items-center justify-start gap-3 rounded-lg px-2 animate-pulse">
+        <div className="size-12 shrink-0 rounded-xl bg-secondary" />
+        {isExpanded && (
+          <div className="h-4 min-w-0 flex-1 rounded-md bg-secondary" />
+        )}
+      </div>
+    );
+  }
+
+  if (!user) return null;
   return (
     <button
       type="button"
@@ -54,7 +68,6 @@ export default function SidebarUserItem({
           variant="span"
           className={cn(
             "min-w-0 flex-1 truncate text-left text-sm font-medium text-foreground transition-colors duration-200 group-hover:text-primary",
-            isActive && "text-primary font-semibold",
           )}
         >
           {user.name}

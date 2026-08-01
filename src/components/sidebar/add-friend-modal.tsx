@@ -9,6 +9,7 @@ import XIcon from "@/icons/x";
 import SearchIcon from "@/icons/search";
 import MessageIcon from "@/icons/message-icon";
 import Typography from "@/components/ui/typography/typography";
+import InfoBox from "@/components/ui/info-box";
 import { UserListItem } from "@/components/ui/user-list-item";
 import {
   useInfiniteSearchUsers,
@@ -99,7 +100,7 @@ export default function AddFriendModal() {
       onSuccess: (conversation) => {
         setAddFriendOpen(false);
         setActiveConversationId(conversation.id);
-        router.push(ROUTES.CHAT(conversation.id));
+        router.push(ROUTES.CONVERSATION(conversation.id));
       },
     });
   };
@@ -154,22 +155,16 @@ export default function AddFriendModal() {
           >
             {!trimmedQuery ? (
               /* Prompt State when no query is typed */
-              <div className="flex flex-col items-center justify-center text-center p-8 my-auto gap-3">
-                <span className="flex size-16 items-center justify-center rounded-full bg-secondary text-primary/80">
-                  <SearchIcon className="size-8 stroke-current" />
-                </span>
-                <Typography
-                  variant="h3"
-                  className="text-base font-semibold text-foreground"
-                >
-                  {t("label-search-friends-prompt")}
-                </Typography>
-                <Typography
-                  variant="p"
-                  className="text-xs text-muted max-w-xs leading-relaxed"
-                >
-                  {t("label-search-friends-hint")}
-                </Typography>
+              <div className="my-auto">
+                <InfoBox
+                  icon={<SearchIcon className="size-8 stroke-current" />}
+                  iconContainerClassName="size-16 bg-secondary text-primary/80"
+                  title={t("label-search-friends-prompt")}
+                  titleClassName="text-base font-semibold"
+                  description={t("label-search-friends-hint")}
+                  descriptionClassName="text-xs max-w-xs leading-relaxed"
+                  className="p-8 gap-3"
+                />
               </div>
             ) : isLoading ? (
               /* Searching Loading State */
@@ -188,16 +183,14 @@ export default function AddFriendModal() {
               </div>
             ) : allUsers.length === 0 ? (
               /* No Results State */
-              <div className="flex flex-col items-center justify-center text-center p-8 my-auto gap-2 rounded-lg border border-dashed border-border">
-                <Typography
-                  variant="span"
-                  className="font-semibold text-sm text-foreground"
-                >
-                  {t("label-no-search-results")}
-                </Typography>
-                <Typography variant="span" className="text-xs text-muted">
-                  {t("label-no-search-results-hint")}
-                </Typography>
+              <div className="my-auto rounded-lg border border-dashed border-border">
+                <InfoBox
+                  title={t("label-no-search-results")}
+                  titleClassName="text-sm font-semibold"
+                  description={t("label-no-search-results-hint")}
+                  descriptionClassName="text-xs"
+                  className="p-8 gap-2"
+                />
               </div>
             ) : (
               /* Results List with Infinite Scrolling */

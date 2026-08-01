@@ -14,6 +14,8 @@ export const API_ROUTES = {
   },
   conversations: {
     getConversations: "/api/v1/conversations",
+    getConversationById: (conversationId: string) =>
+      `/api/v1/conversations/${conversationId}`,
     createConversation: "/api/v1/conversations",
   },
 } as const;

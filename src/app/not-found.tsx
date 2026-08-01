@@ -1,19 +1,24 @@
 "use client";
+
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { ROUTES } from "../../routes.config";
-import Typography from "@/components/ui/typography/typography";
+import InfoBox from "@/components/ui/info-box";
+import Button from "@/components/ui/buttons/button";
 
 export default function NotFound() {
   const t = useTranslations();
 
   return (
-    <div className="flex h-screen w-screen flex-col items-center justify-center gap-5">
-      <Typography variant="h2">{t("label-not-found")}</Typography>
-      <Typography variant="p">{t("label-not-found-description")}</Typography>
-      <Link href={ROUTES.HOME}>
-        <button>{t("label-return-home")}</button>
-      </Link>
+    <div className="flex h-screen w-screen items-center justify-center">
+      <InfoBox
+        title={t("label-not-found")}
+        description={t("label-not-found-description")}
+      >
+        <Link href={ROUTES.HOME}>
+          <Button variant="flat">{t("label-return-home")}</Button>
+        </Link>
+      </InfoBox>
     </div>
   );
 }

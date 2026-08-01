@@ -60,6 +60,9 @@ const messages = {
   "label-no-conversation-selected": "Select a conversation",
   "description-no-conversation-selected":
     "Choose a conversation from the sidebar or add a friend to start chatting.",
+  "label-conversation-not-found": "Conversation not found",
+  "description-conversation-not-found":
+    "This conversation doesn't exist or you don't have access to it.",
 
   // General — pages & errors
   "label-not-found": "Not Found",

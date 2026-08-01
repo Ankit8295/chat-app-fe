@@ -4,6 +4,7 @@ import React, { useEffect, useRef } from "react";
 import { useInfiniteGetFriendsOnly } from "@/lib/queries/user/query";
 import { useTranslations } from "next-intl";
 import Typography from "@/components/ui/typography/typography";
+import InfoBox from "@/components/ui/info-box";
 import FriendItem from "./friend-item";
 
 export default function FriendsTab() {
@@ -96,16 +97,18 @@ export default function FriendsTab() {
         </div>
 
         {allFriends.length === 0 ? (
-          <div className="rounded-lg border border-dashed border-border p-6 text-center">
-            <Typography variant="span" className="text-muted">
-              {t("label-no-friends")}
-            </Typography>
+          <div className="rounded-lg border border-dashed border-border">
+            <InfoBox
+              title={t("label-no-friends")}
+              titleClassName="text-sm text-muted font-normal"
+              className="p-6 gap-0"
+            />
           </div>
         ) : (
           <div
             ref={scrollContainerRef}
             onScroll={handleScroll}
-            className="flex flex-col gap-2 max-h-[350px] max-sm:max-h-[300px] overflow-y-auto pr-1"
+            className="flex flex-col gap-2 max-h-87.5 max-sm:max-h-75 overflow-y-auto pr-1"
           >
             {allFriends.map((friend) => (
               <FriendItem key={friend.userId} friend={friend} />
@@ -124,17 +127,11 @@ export default function FriendsTab() {
                   </Typography>
                 </div>
               ) : hasNextPage ? (
-                <Typography
-                  variant="span"
-                  className="text-xs text-muted/60"
-                >
+                <Typography variant="span" className="text-xs text-muted/60">
                   {t("label-scroll-for-more")}
                 </Typography>
               ) : (
-                <Typography
-                  variant="span"
-                  className="text-xs text-muted/40"
-                >
+                <Typography variant="span" className="text-xs text-muted/40">
                   {t("label-end-of-friends")}
                 </Typography>
               )}
