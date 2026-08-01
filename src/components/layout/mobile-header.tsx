@@ -12,7 +12,7 @@ export default function MobileHeader() {
   const toggleSidebar = useLayoutStore((state) => state.toggleSidebar);
 
   return (
-    <header className="flex lg:hidden w-full items-center justify-between border-b border-border bg-surface px-4 py-2.5 shrink-0 z-20 shadow-2xs">
+    <header className="flex lg:hidden w-full items-center justify-between border-b border-border bg-surface px-4 py-2 shrink-0 z-20 shadow-2xs">
       <div className="flex items-center gap-3">
         <Avatar
           icon={<Logo className="size-5 text-primary" />}

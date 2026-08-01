@@ -23,7 +23,7 @@ export default function ConversationHeader({
   const toggleSidebar = useLayoutStore((state) => state.toggleSidebar);
 
   return (
-    <header className="flex w-full shrink-0 items-center justify-between gap-2 border-b border-border bg-surface px-2 py-2.5 z-20 sm:px-3 sm:gap-3">
+    <header className="flex w-full shrink-0 items-center justify-between gap-2 border-b border-border bg-surface px-2 py-2 z-20 sm:px-3 sm:gap-3">
       <div className="flex min-w-0 flex-1 items-center gap-0.5">
         <ActionIcon
           name="arrow"

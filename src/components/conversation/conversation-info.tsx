@@ -82,7 +82,7 @@ export default function ConversationInfo({
             !open && "lg:invisible",
           )}
         >
-          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-2.5 py-2">
+          <div className="flex shrink-0 items-center justify-between gap-3 border-b border-border px-2.5 py-3.5">
             <div className="flex min-w-0 items-center gap-2">
               <Typography
                 variant="h2"
@@ -91,11 +91,7 @@ export default function ConversationInfo({
                 {isDirect ? t("label-friend-info") : t("label-group-info")}
               </Typography>
             </div>
-            <ActionIcon
-              name="x"
-              label={t("label-close")}
-              onClick={onClose}
-            />
+            <ActionIcon name="x" label={t("label-close")} onClick={onClose} />
           </div>
 
           <div className="min-h-0 flex-1 overflow-y-auto">
