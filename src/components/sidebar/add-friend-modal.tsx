@@ -7,7 +7,6 @@ import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
 import ActionIcon from "@/components/ui/action-icon";
 import SearchIcon from "@/icons/search";
-import MessageIcon from "@/icons/message-icon";
 import Typography from "@/components/ui/typography/typography";
 import InfoBox from "@/components/ui/info-box";
 import { UserListItem } from "@/components/ui/user-list-item";
@@ -207,18 +206,21 @@ export default function AddFriendModal() {
                       email={user.email}
                       image={user.img}
                     >
-                      <UserListItem.Action
-                        disabled={isPendingThisUser}
-                        onClick={() => handleStartChat(user.id)}
-                        title={t("label-start-chat")}
-                        variant="default"
-                      >
-                        {isPendingThisUser ? (
+                      {isPendingThisUser ? (
+                        <div
+                          aria-label={t("label-start-chat")}
+                          className="inline-flex size-8 shrink-0 items-center justify-center rounded-xl"
+                        >
                           <div className="size-5 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                        ) : (
-                          <MessageIcon className="size-5 stroke-current" />
-                        )}
-                      </UserListItem.Action>
+                        </div>
+                      ) : (
+                        <UserListItem.Action
+                          name="message"
+                          label={t("label-start-chat")}
+                          disabled={isPendingThisUser}
+                          onClick={() => handleStartChat(user.id)}
+                        />
+                      )}
                     </UserListItem>
                   );
                 })}

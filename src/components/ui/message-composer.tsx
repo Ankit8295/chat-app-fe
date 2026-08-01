@@ -8,9 +8,7 @@ import {
   type TextareaHTMLAttributes,
 } from "react";
 import { useTranslations } from "next-intl";
-import AddIcon from "@/icons/add";
-import SmileIcon from "@/icons/smile";
-import SendIcon from "@/icons/send";
+import ActionIcon from "@/components/ui/action-icon";
 import { cn } from "../../../cn.config";
 
 const MAX_TEXTAREA_HEIGHT_PX = 160;
@@ -85,56 +83,33 @@ export default function MessageComposer({
         placeholder={t("placeholder-type-message")}
         aria-label={t("placeholder-type-message")}
         className={cn(
-          "min-w-0 flex-1 resize-none bg-transparent px-2 py-2 text-base font-medium text-foreground outline-hidden",
+          "min-w-0 flex-1 h-8 resize-none bg-transparent px-2 py-1 text-base font-medium text-foreground outline-hidden",
           "placeholder:text-muted caret-primary",
           "disabled:cursor-not-allowed disabled:text-disable-text",
           "max-h-40 overflow-y-auto",
         )}
       />
 
-      <div className="flex shrink-0 items-center gap-0.5 pb-0.5">
-        <button
-          type="button"
+      <div className="flex shrink-0 items-center gap-1 ">
+        <ActionIcon
+          name="add"
+          label={t("aria-attach-file")}
           onClick={onAttach}
           disabled={disabled}
-          aria-label={t("aria-attach-file")}
-          className={cn(
-            "inline-flex size-9 items-center justify-center rounded-full text-muted transition-colors",
-            "hover:bg-secondary hover:text-foreground",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-          )}
-        >
-          <AddIcon className="size-5" />
-        </button>
-
-        <button
-          type="button"
+        />
+        <ActionIcon
+          name="smile"
+          label={t("aria-open-emoji")}
           onClick={onEmoji}
           disabled={disabled}
-          aria-label={t("aria-open-emoji")}
-          className={cn(
-            "inline-flex size-9 items-center justify-center rounded-full text-muted transition-colors",
-            "hover:bg-secondary hover:text-foreground",
-            "disabled:cursor-not-allowed disabled:opacity-50",
-          )}
-        >
-          <SmileIcon className="size-5" />
-        </button>
-
-        <button
-          type="button"
+        />
+        <ActionIcon
+          name="send"
+          variant="primary"
+          label={t("aria-send-message")}
           onClick={handleSend}
           disabled={!canSend}
-          aria-label={t("aria-send-message")}
-          className={cn(
-            "inline-flex size-8 items-center justify-center rounded-full transition-colors",
-            "bg-primary text-background",
-            "hover:opacity-90",
-            "disabled:cursor-not-allowed disabled:bg-disable-bg disabled:text-disable-text",
-          )}
-        >
-          <SendIcon className="size-4" />
-        </button>
+        />
       </div>
     </div>
   );

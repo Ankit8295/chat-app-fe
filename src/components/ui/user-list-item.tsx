@@ -1,9 +1,12 @@
 "use client";
 
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { cn } from "../../../cn.config";
 import Typography from "@/components/ui/typography/typography";
 import Avatar from "@/components/ui/avatar/avatar";
+import ActionIcon, {
+  type ActionIconProps,
+} from "@/components/ui/action-icon";
 
 export type UserListItemProps = {
   name: string;
@@ -11,15 +14,6 @@ export type UserListItemProps = {
   image?: string;
   className?: string;
   children?: ReactNode;
-};
-
-export type UserListItemActionProps = {
-  onClick?: () => void;
-  disabled?: boolean;
-  title?: string;
-  variant?: "default" | "danger";
-  children: ReactNode;
-  className?: string;
 };
 
 function UserListItemRoot({
@@ -36,7 +30,6 @@ function UserListItemRoot({
         className,
       )}
     >
-      {/* Left Column: Avatar + Name & Email */}
       <div className="flex items-center gap-3 min-w-0 flex-1">
         <Avatar name={name || email} src={image} size="md" shape="rounded" />
         <div className="min-w-0 flex-1">
@@ -57,7 +50,6 @@ function UserListItemRoot({
         </div>
       </div>
 
-      {/* Right Column: Actions Slot */}
       {children && (
         <div className="flex items-center gap-1 shrink-0">{children}</div>
       )}
@@ -65,32 +57,8 @@ function UserListItemRoot({
   );
 }
 
-function UserListItemAction({
-  onClick,
-  disabled = false,
-  title,
-  variant = "default",
-  children,
-  className,
-}: UserListItemActionProps) {
-  return (
-    <button
-      type="button"
-      disabled={disabled}
-      onClick={onClick}
-      title={title}
-      className={cn(
-        "flex items-center justify-center rounded-lg p-2 transition-colors cursor-pointer outline-none shrink-0 disabled:opacity-50",
-        variant === "default" &&
-          "text-foreground/70 hover:bg-primary/20 hover:text-primary",
-        variant === "danger" &&
-          "text-foreground/50 hover:bg-destructive/10 hover:text-destructive",
-        className,
-      )}
-    >
-      {children}
-    </button>
-  );
+function UserListItemAction(props: ActionIconProps) {
+  return <ActionIcon {...props} />;
 }
 
 export const UserListItem = Object.assign(UserListItemRoot, {
