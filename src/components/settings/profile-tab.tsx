@@ -6,7 +6,7 @@ import { useTranslations } from "next-intl";
 import Typography from "@/components/ui/typography/typography";
 import CustomInput from "@/components/ui/inputs/input";
 import Avatar from "@/components/ui/avatar/avatar";
-import PencilIcon from "@/icons/pencil";
+import ActionIcon from "@/components/ui/action-icon";
 
 export default function ProfileTab() {
   const t = useTranslations();
@@ -16,7 +16,6 @@ export default function ProfileTab() {
     error: profileError,
   } = useGetMe();
 
-  // Editable states
   const [name, setName] = useState("");
   const [about, setAbout] = useState("");
 
@@ -26,13 +25,11 @@ export default function ProfileTab() {
   const nameInputRef = useRef<HTMLInputElement>(null);
   const aboutInputRef = useRef<HTMLInputElement>(null);
 
-  // Sync state with currentUser when fetched
   useEffect(() => {
     setName(currentUser?.name ?? "");
     setAbout(currentUser?.about ?? "");
   }, [currentUser]);
 
-  // Focus input when editing starts
   useEffect(() => {
     if (isEditingName) {
       setTimeout(() => nameInputRef.current?.focus(), 50);
@@ -83,7 +80,6 @@ export default function ProfileTab() {
 
   return (
     <div className="w-full flex flex-col items-center gap-8 max-sm:gap-6 py-2">
-      {/* Profile Picture */}
       <Avatar
         src={currentUser?.img}
         name={currentUser?.name}
@@ -92,9 +88,7 @@ export default function ProfileTab() {
         className="size-28 max-sm:size-24 text-3xl shadow-lg border-2 border-border"
       />
 
-      {/* Profile Sections Container */}
       <div className="w-full flex flex-col gap-7 max-sm:gap-5">
-        {/* About Section */}
         <CustomInput
           ref={aboutInputRef}
           label={t("label-about")}
@@ -115,22 +109,19 @@ export default function ProfileTab() {
                 saveTitle={t("label-save")}
               />
             ) : (
-              <button
-                type="button"
+              <ActionIcon
+                name="pencil"
+                label={t("label-edit")}
+                className="size-8 text-muted hover:bg-transparent hover:text-primary"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsEditingAbout(true);
                 }}
-                className="text-muted hover:text-primary transition-colors cursor-pointer outline-none shrink-0"
-                title={t("label-edit")}
-              >
-                <PencilIcon className="size-5" />
-              </button>
+              />
             )
           }
         />
 
-        {/* Name Section */}
         <CustomInput
           ref={nameInputRef}
           label={t("label-name")}
@@ -151,17 +142,15 @@ export default function ProfileTab() {
                 saveTitle={t("label-save")}
               />
             ) : (
-              <button
-                type="button"
+              <ActionIcon
+                name="pencil"
+                label={t("label-edit")}
+                className="size-8 text-muted hover:bg-transparent hover:text-primary"
                 onClick={(e) => {
                   e.stopPropagation();
                   setIsEditingName(true);
                 }}
-                className="text-muted hover:text-primary transition-colors cursor-pointer outline-none shrink-0"
-                title={t("label-edit")}
-              >
-                <PencilIcon className="size-5" />
-              </button>
+              />
             )
           }
           helperText={t("label-name-hint")}

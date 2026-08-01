@@ -6,7 +6,6 @@ import Logo from "@/icons/logo";
 import { useTranslations } from "next-intl";
 import { cn } from "../../../cn.config";
 import { useLayoutStore } from "@/store/store";
-import ArrowIcon from "@/icons/arrow";
 import Avatar from "@/components/ui/avatar/avatar";
 
 export default function SidebarHeader() {
@@ -21,24 +20,16 @@ export default function SidebarHeader() {
         isExpanded ? "gap-3 " : "gap-0",
       )}
     >
-      <button
-        type="button"
+      <ActionIcon
+        name="arrow"
+        direction={isExpanded ? "left" : "right"}
+        label={
+          isExpanded ? t("label-collapse-sidebar") : t("label-expand-sidebar")
+        }
         onClick={toggleSidebar}
-        aria-label={
-          isExpanded ? t("label-collapse-sidebar") : t("label-expand-sidebar")
-        }
-        title={
-          isExpanded ? t("label-collapse-sidebar") : t("label-expand-sidebar")
-        }
-        className="hidden lg:flex absolute top-full -translate-y-1/2 right-0 z-20 translate-x-1/2 size-7 cursor-pointer items-center justify-center rounded-full border border-border bg-surface-elevated text-foreground shadow-2xs transform-gpu transition-transform duration-200 hover:bg-primary hover:text-background hover:border-primary hover:scale-110 active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary"
-      >
-        <ArrowIcon
-          width={12}
-          height={12}
-          direction={isExpanded ? "left" : "right"}
-          className="flex items-center justify-center stroke-current"
-        />
-      </button>
+        className="hidden lg:flex absolute top-full -translate-y-1/2 right-0 z-20 translate-x-1/2 size-7 rounded-full border border-border bg-surface-elevated text-foreground shadow-2xs hover:bg-primary hover:text-background hover:border-primary hover:scale-110 active:scale-95 focus-visible:ring-2 focus-visible:ring-primary"
+        iconClassName="size-3"
+      />
 
       <Avatar
         icon={<Logo className="size-6 text-primary" />}

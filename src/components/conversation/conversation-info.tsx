@@ -3,11 +3,15 @@
 import { type ReactNode, useEffect, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "../../../cn.config";
+import ActionIcon from "@/components/ui/action-icon";
 import Avatar from "@/components/ui/avatar/avatar";
+import Button from "@/components/ui/buttons/button";
 import PanelHeader from "@/components/ui/panel-header";
 import Typography from "@/components/ui/typography/typography";
 import UserListItem from "@/components/ui/user-list-item";
 import ConversationInfoRow from "@/components/conversation/conversation-info-row";
+import AddGroupMembersModal from "@/components/conversation/add-group-members-modal";
+import ViewAllMembersModal from "@/components/conversation/view-all-members-modal";
 import type { ConversationDetail } from "@/lib/queries/user/types";
 import BellIcon from "@/icons/bell";
 import ClearIcon from "@/icons/clear";
@@ -18,6 +22,9 @@ import PhoneIcon from "@/icons/phone";
 import SearchIcon from "@/icons/search";
 import TrashIcon from "@/icons/trash";
 import VideoIcon from "@/icons/video";
+
+/** How many participants to show in the group info preview before "View all". */
+const PARTICIPANTS_PREVIEW_LIMIT = 5;
 
 type ConversationInfoProps = {
   conversation: ConversationDetail;
@@ -32,21 +39,35 @@ export default function ConversationInfo({
 }: ConversationInfoProps) {
   const t = useTranslations();
   const [muted, setMuted] = useState(false);
+  const [isAddMembersOpen, setAddMembersOpen] = useState(false);
+  const [isViewAllMembersOpen, setViewAllMembersOpen] = useState(false);
   const isDirect = conversation.type === "direct";
   const displayName = conversation.name ?? conversation.id;
   const mediaCount = 0;
   const groupsInCommon = 0;
+  const participantCount = conversation.participants.length;
+  const previewParticipants = conversation.participants.slice(
+    0,
+    PARTICIPANTS_PREVIEW_LIMIT,
+  );
+  const hasMoreParticipants = participantCount > PARTICIPANTS_PREVIEW_LIMIT;
 
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      setAddMembersOpen(false);
+      setViewAllMembersOpen(false);
+      return;
+    }
 
     const onKeyDown = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
+      if (event.key !== "Escape") return;
+      if (isAddMembersOpen || isViewAllMembersOpen) return;
+      onClose();
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose]);
+  }, [open, onClose, isAddMembersOpen, isViewAllMembersOpen]);
 
   return (
     <>
@@ -83,9 +104,7 @@ export default function ConversationInfo({
           )}
         >
           <PanelHeader
-            title={
-              isDirect ? t("label-friend-info") : t("label-group-info")
-            }
+            title={isDirect ? t("label-friend-info") : t("label-group-info")}
             onClose={onClose}
           />
 
@@ -107,7 +126,7 @@ export default function ConversationInfo({
               {!isDirect && (
                 <Typography variant="span" className="text-muted">
                   {t("label-members-count", {
-                    count: conversation.participants.length,
+                    count: participantCount,
                   })}
                 </Typography>
               )}
@@ -184,14 +203,23 @@ export default function ConversationInfo({
               </div>
             ) : (
               <div className="border-b border-border px-4 py-4">
-                <Typography
-                  variant="span"
-                  className="mb-3 block text-sm font-medium text-muted"
-                >
-                  {t("label-participants")}
-                </Typography>
+                <div className="mb-3 flex items-center justify-between gap-2">
+                  <Typography
+                    variant="span"
+                    className="text-sm font-medium text-muted"
+                  >
+                    {t("label-participants-with-count", {
+                      count: participantCount,
+                    })}
+                  </Typography>
+                  <ActionIcon
+                    name="add"
+                    label={t("aria-add-members")}
+                    onClick={() => setAddMembersOpen(true)}
+                  />
+                </div>
                 <div className="flex flex-col gap-2">
-                  {conversation.participants.map((participant) => (
+                  {previewParticipants.map((participant) => (
                     <UserListItem
                       key={participant.id}
                       name={participant.name}
@@ -199,6 +227,16 @@ export default function ConversationInfo({
                     />
                   ))}
                 </div>
+                {hasMoreParticipants && (
+                  <Button
+                    type="button"
+                    variant="text"
+                    className="mt-3"
+                    onClick={() => setViewAllMembersOpen(true)}
+                  >
+                    {t("label-view-all-members")}
+                  </Button>
+                )}
               </div>
             )}
 
@@ -224,6 +262,21 @@ export default function ConversationInfo({
           </div>
         </div>
       </aside>
+
+      {!isDirect && (
+        <>
+          <AddGroupMembersModal
+            open={isAddMembersOpen}
+            onClose={() => setAddMembersOpen(false)}
+            existingParticipants={conversation.participants}
+          />
+          <ViewAllMembersModal
+            open={isViewAllMembersOpen}
+            onClose={() => setViewAllMembersOpen(false)}
+            participants={conversation.participants}
+          />
+        </>
+      )}
     </>
   );
 }

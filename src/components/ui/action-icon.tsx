@@ -40,7 +40,7 @@ export type ActionIconProps = {
   name: ActionIconName;
   label: string;
   title?: string;
-  onClick?: () => void;
+  onClick?: ComponentProps<"button">["onClick"];
   disabled?: boolean;
   className?: string;
   iconClassName?: string;

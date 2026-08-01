@@ -25,14 +25,6 @@ export default function FriendItem({ friend }: FriendItemProps) {
           console.log("Future API call: remove friend", friend.userId)
         }
       />
-      <UserListItem.Action
-        name="block"
-        label={t("label-block")}
-        variant="danger"
-        onClick={() =>
-          console.log("Future API call: block user", friend.userId)
-        }
-      />
     </UserListItem>
   );
 }
