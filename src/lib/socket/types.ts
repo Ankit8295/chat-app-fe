@@ -4,9 +4,19 @@ export type WsEventType =
   | "ready"
   | "ping"
   | "pong"
+  | "error"
   | "message_send"
   | "message_new"
-  | "error";
+  | "message_update"
+  | "message_updated"
+  | "message_delete"
+  | "message_deleted"
+  | "member_add"
+  | "member_added"
+  | "member_remove"
+  | "member_removed"
+  | "group_update"
+  | "group_updated";
 
 export type WsEnvelope<T = unknown> = {
   type: WsEventType | string;
