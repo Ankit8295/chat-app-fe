@@ -8,3 +8,7 @@ export enum UsersQueryKeys {
   CONVERSATION = "CONVERSATION",
   PREFERENCES = "PREFERENCES",
 }
+
+export enum MessagesQueryKeys {
+  MESSAGES = "MESSAGES",
+}

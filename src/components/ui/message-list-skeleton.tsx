@@ -1,6 +1,7 @@
 "use client";
 
 import { useLayoutEffect, useMemo, useRef } from "react";
+import { useTranslations } from "next-intl";
 import MessageSkeleton from "@/components/ui/message-skeleton";
 import { createSeededRandom } from "@/utils/seeded-random";
 
@@ -38,6 +39,7 @@ type MessageListSkeletonProps = {
 export default function MessageListSkeleton({
   seed = "messages",
 }: MessageListSkeletonProps) {
+  const t = useTranslations();
   const messages = useMemo(() => createSkeletonMessages(seed), [seed]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -50,7 +52,7 @@ export default function MessageListSkeleton({
   return (
     <div
       ref={scrollRef}
-      aria-label="Loading messages"
+      aria-label={t("aria-loading-messages")}
       className="flex h-full min-h-0 w-full flex-col overflow-y-auto px-2 pb-28 animate-pulse select-none"
     >
       <div className="mt-auto flex w-full flex-col">

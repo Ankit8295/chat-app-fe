@@ -3,21 +3,34 @@
 import { useEffect, useState } from "react";
 import ConversationHeader from "@/components/conversation/conversation-header";
 import ConversationInfo from "@/components/conversation/conversation-info";
+import MessageList from "@/components/conversation/message-list";
 import ConversationNotFound from "@/components/ui/conversation-not-found";
 import MessageComposer from "@/components/ui/message-composer";
 import MessageListSkeleton from "@/components/ui/message-list-skeleton";
-import { useGetConversation } from "@/lib/queries/user/query";
+import { useInfiniteMessages } from "@/lib/queries/message/query";
+import { useGetConversation, useGetMe } from "@/lib/queries/user/query";
+import { useChatSocketContext } from "@/lib/socket/chat-socket-provider";
 import { useParams } from "next/navigation";
 
 export default function ConversationPage() {
   const params = useParams<{ id: string }>();
   const id = params?.id ?? "";
   const { data: conversation, isLoading, isError } = useGetConversation(id);
+  const { data: me } = useGetMe();
+  const {
+    messages,
+    isLoading: isMessagesLoading,
+    isFetchingNextPage,
+    hasNextPage,
+    fetchNextPage,
+  } = useInfiniteMessages(id);
+  const { sendMessage, isConnected } = useChatSocketContext();
   const [draft, setDraft] = useState("");
   const [isInfoOpen, setIsInfoOpen] = useState(false);
 
   useEffect(() => {
     setIsInfoOpen(false);
+    setDraft("");
   }, [id]);
 
   if (isError || (!isLoading && !conversation)) {
@@ -29,6 +42,14 @@ export default function ConversationPage() {
   };
 
   const displayName = conversation?.name ?? conversation?.id ?? "";
+  const showMessageSkeleton = isLoading || !conversation || isMessagesLoading;
+
+  const handleSend = () => {
+    const content = draft.trim();
+    if (!content || !id || !isConnected) return;
+    sendMessage({ conversationId: id, content });
+    setDraft("");
+  };
 
   return (
     <div className="relative flex h-full min-h-0 w-full overflow-hidden">
@@ -42,10 +63,21 @@ export default function ConversationPage() {
 
         <div className="relative min-h-0 flex-1 overflow-hidden">
           <div className="absolute inset-0 min-h-0">
-            {isLoading || !conversation ? (
+            {showMessageSkeleton ? (
               <MessageListSkeleton seed={id} />
             ) : (
-              <div className="h-full min-h-0 overflow-y-auto px-2 pb-28" />
+              <MessageList
+                messages={messages}
+                currentUserId={me?.id}
+                isGroup={conversation?.type === "group"}
+                hasOlder={!!hasNextPage}
+                isFetchingOlder={isFetchingNextPage}
+                onLoadOlder={() => {
+                  if (hasNextPage && !isFetchingNextPage) {
+                    void fetchNextPage();
+                  }
+                }}
+              />
             )}
           </div>
 
@@ -58,11 +90,8 @@ export default function ConversationPage() {
               <MessageComposer
                 value={draft}
                 onChange={setDraft}
-                disabled={isLoading}
-                onSend={() => {
-                  if (!draft.trim()) return;
-                  setDraft("");
-                }}
+                disabled={isLoading || !isConnected}
+                onSend={handleSend}
               />
             </div>
           </div>
