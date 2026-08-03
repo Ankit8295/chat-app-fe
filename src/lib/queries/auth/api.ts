@@ -33,3 +33,14 @@ export async function login(payload: LoginPayload) {
     throw new Error("something went wrong");
   }
 }
+
+export async function logout() {
+  await axiosClient.post(API_ROUTES.auth.logout);
+}
+
+export async function refreshSession() {
+  const response = await axiosClient.post<AuthResponse>(
+    API_ROUTES.auth.refresh,
+  );
+  return response.data;
+}

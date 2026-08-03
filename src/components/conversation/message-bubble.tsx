@@ -37,7 +37,7 @@ export default function MessageBubble({
           group === "single" ? "mt-4" : "mt-1.5",
         )}
       >
-        <div className="max-w-[80%] rounded-2xl rounded-tr-xs bg-primary/20 px-3 py-2">
+        <div className="max-w-[80%] rounded-xl rounded-tr-xs bg-primary/20 px-2 py-1">
           <Typography
             variant="p"
             className="whitespace-pre-wrap wrap-break-word text-sm font-medium text-foreground"
@@ -46,7 +46,7 @@ export default function MessageBubble({
           </Typography>
           <Typography
             variant="span"
-            className="mt-1 block text-right text-[0.7rem] text-muted"
+            className=" block text-right text-[10px] text-muted"
           >
             {formatMessageTime(message.createdAt)}
           </Typography>
@@ -58,7 +58,7 @@ export default function MessageBubble({
   return (
     <div
       className={cn(
-        "flex w-full justify-start items-end gap-2.5",
+        "flex w-full justify-start items-start gap-2",
         group === "single" ? "mt-4" : "mt-1.5",
       )}
     >
@@ -73,7 +73,7 @@ export default function MessageBubble({
       ) : (
         <div className="size-8 shrink-0" />
       )}
-      <div className="max-w-[80%] rounded-2xl rounded-tl-xs bg-secondary px-3 py-2">
+      <div className="max-w-[80%] rounded-xl rounded-tl-xs bg-secondary px-2 py-1">
         {showSenderName && (
           <Typography
             variant="span"
@@ -90,7 +90,7 @@ export default function MessageBubble({
         </Typography>
         <Typography
           variant="span"
-          className="mt-1 block text-right text-[0.7rem] text-muted"
+          className=" block text-right text-[10px] text-muted"
         >
           {formatMessageTime(message.createdAt)}
         </Typography>

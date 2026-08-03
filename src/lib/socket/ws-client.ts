@@ -94,6 +94,19 @@ export class ChatWsClient {
     this.setStatus("closed");
   }
 
+  reconnect() {
+    this.shouldReconnect = true;
+    this.clearReconnectTimer();
+    this.stopHeartbeat();
+    const existing = this.socket;
+    this.socket = null;
+    if (existing) {
+      existing.onclose = null;
+      existing.close();
+    }
+    this.connect();
+  }
+
   send(type: WsEventType | string, payload: unknown = {}) {
     if (!this.socket || this.socket.readyState !== WebSocket.OPEN) {
       throw new Error("WebSocket is not connected");
