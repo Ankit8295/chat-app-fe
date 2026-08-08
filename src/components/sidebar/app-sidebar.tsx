@@ -2,7 +2,7 @@
 
 import SidebarUserList from "./sidebar-user-list";
 import SidebarHeader from "./sidebar-header";
-import { useGetConversations } from "@/lib/queries/user/query";
+import { useGetConversations } from "@/lib/queries/chat/query";
 import { useLayoutStore } from "@/store/store";
 import SettingsIcon from "@/icons/settings";
 import MessageIcon from "@/icons/message-icon";

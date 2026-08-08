@@ -10,10 +10,8 @@ import {
 } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
-import {
-  useCreateConversation,
-  useInfiniteSearchUsers,
-} from "@/lib/queries/user/query";
+import { useInfiniteSearchUsers } from "@/lib/queries/user/query";
+import { useCreateConversation } from "@/lib/queries/chat/query";
 import type { UserSearchResult } from "@/lib/queries/user/types";
 import {
   createGroupFormSchema,

@@ -3,10 +3,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { useInfiniteSearchUsers } from "@/lib/queries/user/query";
-import type {
-  ConversationParticipant,
-  UserSearchResult,
-} from "@/lib/queries/user/types";
+import type { ConversationParticipant } from "@/lib/queries/chat/types";
+import type { UserSearchResult } from "@/lib/queries/user/types";
 import ActionIcon from "@/components/ui/action-icon";
 import Avatar from "@/components/ui/avatar/avatar";
 import Button from "@/components/ui/buttons/button";

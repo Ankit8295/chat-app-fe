@@ -12,7 +12,7 @@ import UserListItem from "@/components/ui/user-list-item";
 import ConversationInfoRow from "@/components/conversation/conversation-info-row";
 import AddGroupMembersModal from "@/components/conversation/add-group-members-modal";
 import ViewAllMembersModal from "@/components/conversation/view-all-members-modal";
-import type { ConversationDetail } from "@/lib/queries/user/types";
+import type { ConversationDetail } from "@/lib/queries/chat/types";
 import BellIcon from "@/icons/bell";
 import ClearIcon from "@/icons/clear";
 import HeartIcon from "@/icons/heart";

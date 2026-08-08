@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useTranslations } from "next-intl";
-import type { ConversationParticipant } from "@/lib/queries/user/types";
+import type { ConversationParticipant } from "@/lib/queries/chat/types";
 import SlidePanel from "@/components/ui/slide-panel";
 import Typography from "@/components/ui/typography/typography";
 import UserListItem from "@/components/ui/user-list-item";

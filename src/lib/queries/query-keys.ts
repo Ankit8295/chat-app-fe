@@ -4,9 +4,12 @@ export enum UsersQueryKeys {
   ME = "ME",
   SEARCH_USERS = "SEARCH_USERS",
   FRIENDS = "FRIENDS",
+  PREFERENCES = "PREFERENCES",
+}
+
+export enum ChatQueryKeys {
   CONVERSATIONS = "CONVERSATIONS",
   CONVERSATION = "CONVERSATION",
-  PREFERENCES = "PREFERENCES",
 }
 
 export enum MessagesQueryKeys {

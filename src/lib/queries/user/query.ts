@@ -1,24 +1,9 @@
-import {
-  useQuery,
-  useInfiniteQuery,
-  useMutation,
-  useQueryClient,
-} from "@tanstack/react-query";
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { UsersQueryKeys } from "../query-keys";
-import {
-  searchUsers,
-  getFriendsOnly,
-  getConversations,
-  getConversationById,
-  createConversation,
-  getFriendById,
-  getMe,
-  getUserPreferences,
-  setUserPreferences,
-} from "./api";
-import { User, Conversation, ConversationDetail, UserPreference, CreateConversationRequest } from "./types";
+import { getFriendById, getFriendsOnly, getMe, getUserPreferences, searchUsers, setUserPreferences } from "./api";
+import { User, UserPreference } from "./types";
 
-function useInfiniteSearchUsers(search?: string, size = 10) {
+export function useInfiniteSearchUsers(search?: string, size = 10) {
   const queryTerm = search?.trim() ?? "";
   return useInfiniteQuery({
     queryKey: [UsersQueryKeys.SEARCH_USERS, queryTerm, size],
@@ -29,7 +14,7 @@ function useInfiniteSearchUsers(search?: string, size = 10) {
   });
 }
 
-function useInfiniteGetFriendsOnly(size = 10) {
+export function useInfiniteGetFriendsOnly(size = 10) {
   return useInfiniteQuery({
     queryKey: [UsersQueryKeys.FRIENDS, size],
     queryFn: ({ pageParam = 0 }) => getFriendsOnly(pageParam, size),
@@ -38,37 +23,7 @@ function useInfiniteGetFriendsOnly(size = 10) {
   });
 }
 
-function useGetConversations() {
-  return useQuery<Conversation[]>({
-    queryKey: [UsersQueryKeys.CONVERSATIONS],
-    queryFn: getConversations,
-    staleTime: Infinity,
-  });
-}
-
-function useGetConversation(conversationId: string) {
-  return useQuery<ConversationDetail>({
-    queryKey: [UsersQueryKeys.CONVERSATION, conversationId],
-    queryFn: () => getConversationById(conversationId),
-    enabled: !!conversationId,
-    staleTime: Infinity,
-    retry: false,
-  });
-}
-
-function useCreateConversation() {
-  const queryClient = useQueryClient();
-
-  return useMutation<Conversation, Error, CreateConversationRequest>({
-    mutationFn: (request) => createConversation(request),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [UsersQueryKeys.CONVERSATIONS] });
-      queryClient.invalidateQueries({ queryKey: [UsersQueryKeys.FRIENDS] });
-    },
-  });
-}
-
-function useGetMe() {
+export function useGetMe() {
   return useQuery<User>({
     queryKey: [UsersQueryKeys.ME],
     queryFn: getMe,
@@ -76,7 +31,7 @@ function useGetMe() {
   });
 }
 
-function useGetFriend(friendId: string) {
+export function useGetFriend(friendId: string) {
   return useQuery<User>({
     queryKey: [UsersQueryKeys.FRIEND, friendId],
     queryFn: () => getFriendById(friendId),
@@ -84,7 +39,7 @@ function useGetFriend(friendId: string) {
   });
 }
 
-function useGetUserPreferences() {
+export function useGetUserPreferences() {
   return useQuery<UserPreference>({
     queryKey: [UsersQueryKeys.PREFERENCES],
     queryFn: getUserPreferences,
@@ -92,26 +47,13 @@ function useGetUserPreferences() {
   });
 }
 
-function useSetUserPreferences() {
+export function useSetUserPreferences() {
   const queryClient = useQueryClient();
 
   return useMutation<UserPreference, Error, string | null>({
-    mutationFn: (lastConversationId: string | null) =>
-      setUserPreferences(lastConversationId),
+    mutationFn: (lastConversationId: string | null) => setUserPreferences(lastConversationId),
     onSuccess: (data) => {
       queryClient.setQueryData([UsersQueryKeys.PREFERENCES], data);
     },
   });
 }
-
-export {
-  useInfiniteSearchUsers,
-  useInfiniteGetFriendsOnly,
-  useGetConversations,
-  useGetConversation,
-  useCreateConversation,
-  useGetMe,
-  useGetFriend,
-  useGetUserPreferences,
-  useSetUserPreferences,
-};

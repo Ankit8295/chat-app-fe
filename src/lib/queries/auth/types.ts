@@ -1,10 +1,9 @@
+/**
+ * Phase 2: Auth service no longer returns profile data.
+ * Call /api/v1/users/me (cached by useUserQuery) to get name, image, etc.
+ */
 export type AuthResponse = {
   expiresInSeconds: number;
-  user: {
-    id: string;
-    email: string;
-    name: string;
-  };
 };
 
 export type RegisterPayload = {

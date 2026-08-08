@@ -5,7 +5,7 @@ import { useLayoutStore } from "@/store/store";
 import { useParams, useRouter } from "next/navigation";
 import { ROUTES } from "../../../routes.config";
 import { useEffect, useRef } from "react";
-import { Conversation } from "@/lib/queries/user/types";
+import { Conversation } from "@/lib/queries/chat/types";
 import { useTranslations } from "next-intl";
 import {
   useGetUserPreferences,

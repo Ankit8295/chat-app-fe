@@ -9,10 +9,8 @@ import Typography from "@/components/ui/typography/typography";
 import InfoBox from "@/components/ui/info-box";
 import { UserListItem } from "@/components/ui/user-list-item";
 import SlidePanel from "@/components/ui/slide-panel";
-import {
-  useInfiniteSearchUsers,
-  useCreateConversation,
-} from "@/lib/queries/user/query";
+import { useInfiniteSearchUsers } from "@/lib/queries/user/query";
+import { useCreateConversation } from "@/lib/queries/chat/query";
 import { ROUTES } from "../../../routes.config";
 
 export default function NewChatModal() {

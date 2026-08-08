@@ -8,7 +8,8 @@ import ConversationNotFound from "@/components/ui/conversation-not-found";
 import MessageComposer from "@/components/ui/message-composer";
 import MessageListSkeleton from "@/components/ui/message-list-skeleton";
 import { useInfiniteMessages } from "@/lib/queries/message/query";
-import { useGetConversation, useGetMe } from "@/lib/queries/user/query";
+import { useGetConversation } from "@/lib/queries/chat/query";
+import { useGetMe } from "@/lib/queries/user/query";
 import { useChatSocketContext } from "@/lib/socket/chat-socket-provider";
 import { useParams } from "next/navigation";
 
