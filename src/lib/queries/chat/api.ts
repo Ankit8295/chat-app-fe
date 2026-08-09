@@ -1,6 +1,6 @@
 import { API_ROUTES } from "@/lib/api/api-routes";
 import { axiosClient } from "@/lib/api/axios-client";
-import { Conversation, ConversationDetail, CreateConversationRequest } from "./types";
+import { Conversation, ConversationDetail, CreateConversationRequest, UpdateGroupConversationRequest } from "./types";
 
 export async function getConversations(): Promise<Conversation[]> {
   try {
@@ -38,5 +38,21 @@ export async function createConversation(
   } catch (error) {
     console.error("error creating conversation", error);
     throw new Error("Failed to create conversation");
+  }
+}
+
+export async function updateGroupConversation(
+  conversationId: string,
+  request: UpdateGroupConversationRequest
+): Promise<Conversation> {
+  try {
+    const response = await axiosClient.put<Conversation>(
+      API_ROUTES.conversations.updateConversation(conversationId),
+      request
+    );
+    return response.data;
+  } catch (error) {
+    console.error("error updating conversation", error);
+    throw new Error("Failed to update conversation");
   }
 }

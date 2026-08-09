@@ -1,16 +1,13 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { InfiniteData, useQueryClient } from "@tanstack/react-query";
-import { MessagesQueryKeys } from "@/lib/queries/query-keys";
-import { upsertMessageInCache } from "@/lib/queries/message/cache";
-import { Message, MessagePageResponse } from "@/lib/queries/message/types";
+import { useQueryClient } from "@tanstack/react-query";
 import { getChatWsClient } from "./ws-client";
+import { dispatchWsEnvelope } from "./envelope-handlers";
 import {
   WsConnectionStatus,
   WsEnvelope,
   WsErrorPayload,
-  WsMessageNewPayload,
   WsSendMessagePayload,
 } from "./types";
 
@@ -25,20 +22,7 @@ export function useChatSocket() {
 
     const unsubscribeStatus = client.onStatusChange(setStatus);
     const unsubscribeEvents = client.subscribe((envelope: WsEnvelope) => {
-      if (envelope.type === "message_new") {
-        const message = envelope.payload as WsMessageNewPayload;
-        if (!message?.id || !message.conversationId) return;
-
-        queryClient.setQueryData<InfiniteData<MessagePageResponse>>(
-          [MessagesQueryKeys.MESSAGES, message.conversationId],
-          (current) => upsertMessageInCache(current, message as Message),
-        );
-        return;
-      }
-
-      if (envelope.type === "error") {
-        setLastError(envelope.payload as WsErrorPayload);
-      }
+      dispatchWsEnvelope(envelope, { queryClient, setLastError });
     });
 
     return () => {

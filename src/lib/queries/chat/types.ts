@@ -2,6 +2,7 @@ export type Conversation = {
   id: string;
   type: "direct" | "group";
   name?: string | null;
+  about?: string | null;
   image?: string | null;
   createdBy?: string | null;
   createdAt: string;
@@ -19,6 +20,7 @@ export type ConversationDetail = {
   id: string;
   type: "direct" | "group";
   name?: string | null;
+  about?: string | null;
   image?: string | null;
   friend: ConversationParticipant | null;
   participants: ConversationParticipant[];
@@ -39,3 +41,8 @@ export type CreateConversationRequest =
       image?: string | null;
       participants: string[];
     };
+
+export type UpdateGroupConversationRequest = {
+  name?: string;
+  about?: string;
+};

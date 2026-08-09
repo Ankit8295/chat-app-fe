@@ -55,7 +55,6 @@ const messages = {
   "validation-group-name-max": "Group name must be at most 50 characters.",
   "validation-group-about-max": "About must be at most 200 characters.",
   "validation-group-participants-min": "Select at least one participant.",
-  "validation-profile-name-min": "Name must be at least 1 character.",
   "validation-profile-name-max": "Name must be at most 80 characters.",
   "validation-profile-about-max": "About must be at most 160 characters.",
   "description-new-chat-modal": "Search for people and start a conversation.",
@@ -163,6 +162,7 @@ const messages = {
   "label-loading-profile": "Loading profile...",
   "label-loading-friends": "Loading friends...",
   "error-update-profile-failed": "Failed to update profile. Please try again.",
+  "error-update-group-failed": "Failed to update group. Please try again.",
 } as const;
 
 export default messages;

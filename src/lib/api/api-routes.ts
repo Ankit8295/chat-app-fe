@@ -19,6 +19,8 @@ export const API_ROUTES = {
     getConversationById: (conversationId: string) =>
       `/api/v1/conversations/${conversationId}`,
     createConversation: "/api/v1/conversations",
+    updateConversation: (conversationId: string) =>
+      `/api/v1/conversations/${conversationId}`,
     getMessages: (conversationId: string) =>
       `/api/v1/conversations/${conversationId}/messages`,
   },

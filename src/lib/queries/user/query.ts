@@ -4,7 +4,7 @@ import {
   useQuery,
   useQueryClient,
 } from "@tanstack/react-query";
-import { ChatQueryKeys, UsersQueryKeys } from "../query-keys";
+import { UsersQueryKeys } from "../query-keys";
 import {
   getFriendById,
   getFriendsOnly,

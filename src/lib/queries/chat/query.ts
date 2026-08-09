@@ -1,7 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChatQueryKeys, UsersQueryKeys } from "../query-keys";
-import { createConversation, getConversationById, getConversations } from "./api";
-import { Conversation, ConversationDetail, CreateConversationRequest } from "./types";
+import {
+  createConversation,
+  getConversationById,
+  getConversations,
+  updateGroupConversation,
+} from "./api";
+import {
+  Conversation,
+  ConversationDetail,
+  CreateConversationRequest,
+  UpdateGroupConversationRequest,
+} from "./types";
 
 export function useGetConversations() {
   return useQuery<Conversation[]>({
@@ -30,6 +40,49 @@ export function useCreateConversation() {
       queryClient.invalidateQueries({ queryKey: [ChatQueryKeys.CONVERSATIONS] });
       // known FE seam: creating a DIRECT conversation also mutates friendships (User domain)
       queryClient.invalidateQueries({ queryKey: [UsersQueryKeys.FRIENDS] });
+    },
+  });
+}
+
+export function useUpdateGroupConversation(conversationId: string) {
+  const queryClient = useQueryClient();
+
+  return useMutation<
+    Conversation,
+    Error,
+    UpdateGroupConversationRequest
+  >({
+    mutationFn: (request) => updateGroupConversation(conversationId, request),
+    onSuccess: (updated) => {
+      queryClient.setQueryData<Conversation[]>(
+        [ChatQueryKeys.CONVERSATIONS],
+        (existing) =>
+          existing?.map((conversation) =>
+            conversation.id === updated.id
+              ? {
+                  ...conversation,
+                  name: updated.name,
+                  about: updated.about,
+                  image: updated.image,
+                  updatedAt: updated.updatedAt,
+                }
+              : conversation,
+          ),
+      );
+
+      queryClient.setQueryData<ConversationDetail>(
+        [ChatQueryKeys.CONVERSATION, conversationId],
+        (existing) =>
+          existing
+            ? {
+                ...existing,
+                name: updated.name,
+                about: updated.about,
+                image: updated.image,
+                updatedAt: updated.updatedAt,
+              }
+            : existing,
+      );
     },
   });
 }

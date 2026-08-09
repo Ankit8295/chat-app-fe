@@ -29,7 +29,7 @@ export const createUpdateProfileNameSchema = (t: Translate) =>
   z
     .string()
     .trim()
-    .min(1, { error: t("validation-profile-name-min") })
+    .min(2, { error: t("validation-name-min") })
     .max(PROFILE_NAME_MAX, { error: t("validation-profile-name-max") });
 
 export const createUpdateProfileAboutSchema = (t: Translate) =>

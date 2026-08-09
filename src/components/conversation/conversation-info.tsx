@@ -1,11 +1,12 @@
 "use client";
 
-import { type ReactNode, useEffect, useState } from "react";
+import { type ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { useTranslations } from "next-intl";
 import { cn } from "../../../cn.config";
 import ActionIcon from "@/components/ui/action-icon";
 import Avatar from "@/components/ui/avatar/avatar";
 import Button from "@/components/ui/buttons/button";
+import CustomInput from "@/components/ui/inputs/input";
 import PanelHeader from "@/components/ui/panel-header";
 import Typography from "@/components/ui/typography/typography";
 import UserListItem from "@/components/ui/user-list-item";
@@ -13,6 +14,14 @@ import ConversationInfoRow from "@/components/conversation/conversation-info-row
 import AddGroupMembersModal from "@/components/conversation/add-group-members-modal";
 import ViewAllMembersModal from "@/components/conversation/view-all-members-modal";
 import type { ConversationDetail } from "@/lib/queries/chat/types";
+import { useUpdateGroupConversation } from "@/lib/queries/chat/query";
+import {
+  createUpdateGroupAboutSchema,
+  createUpdateGroupNameSchema,
+  GROUP_ABOUT_MAX,
+  GROUP_NAME_MAX,
+} from "@/lib/queries/chat/validations";
+import { useGetMe } from "@/lib/queries/user/query";
 import BellIcon from "@/icons/bell";
 import ClearIcon from "@/icons/clear";
 import HeartIcon from "@/icons/heart";
@@ -38,10 +47,30 @@ export default function ConversationInfo({
   onClose,
 }: ConversationInfoProps) {
   const t = useTranslations();
+  const { data: me } = useGetMe();
+  const updateGroup = useUpdateGroupConversation(conversation.id);
+
+  const nameSchema = useMemo(() => createUpdateGroupNameSchema(t), [t]);
+  const aboutSchema = useMemo(() => createUpdateGroupAboutSchema(t), [t]);
+
   const [muted, setMuted] = useState(false);
   const [isAddMembersOpen, setAddMembersOpen] = useState(false);
   const [isViewAllMembersOpen, setViewAllMembersOpen] = useState(false);
+
+  const [name, setName] = useState("");
+  const [about, setAbout] = useState("");
+  const [nameError, setNameError] = useState<string>();
+  const [aboutError, setAboutError] = useState<string>();
+  const [saveError, setSaveError] = useState<string>();
+  const [isEditingName, setIsEditingName] = useState(false);
+  const [isEditingAbout, setIsEditingAbout] = useState(false);
+
+  const nameInputRef = useRef<HTMLInputElement>(null);
+  const aboutInputRef = useRef<HTMLInputElement>(null);
+
   const isDirect = conversation.type === "direct";
+  const canEditGroup =
+    !isDirect && !!me?.id && conversation.createdBy === me.id;
   const displayName = conversation.name ?? conversation.id;
   const mediaCount = 0;
   const groupsInCommon = 0;
@@ -51,11 +80,24 @@ export default function ConversationInfo({
     PARTICIPANTS_PREVIEW_LIMIT,
   );
   const hasMoreParticipants = participantCount > PARTICIPANTS_PREVIEW_LIMIT;
+  const isSaving = updateGroup.isPending;
+
+  useEffect(() => {
+    setName(conversation.name ?? "");
+    setAbout(conversation.about ?? "");
+    setNameError(undefined);
+    setAboutError(undefined);
+    setSaveError(undefined);
+    setIsEditingName(false);
+    setIsEditingAbout(false);
+  }, [conversation]);
 
   useEffect(() => {
     if (!open) {
       setAddMembersOpen(false);
       setViewAllMembersOpen(false);
+      setIsEditingName(false);
+      setIsEditingAbout(false);
       return;
     }
 
@@ -69,9 +111,69 @@ export default function ConversationInfo({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose, isAddMembersOpen, isViewAllMembersOpen]);
 
+  useEffect(() => {
+    if (isEditingName) {
+      setTimeout(() => nameInputRef.current?.focus(), 50);
+    }
+  }, [isEditingName]);
+
+  useEffect(() => {
+    if (isEditingAbout) {
+      setTimeout(() => aboutInputRef.current?.focus(), 50);
+    }
+  }, [isEditingAbout]);
+
+  const handleSaveName = () => {
+    const parsed = nameSchema.safeParse(name);
+    if (!parsed.success) {
+      setNameError(parsed.error.issues[0]?.message);
+      return;
+    }
+
+    setNameError(undefined);
+    setSaveError(undefined);
+
+    if (parsed.data === (conversation.name ?? "")) {
+      setIsEditingName(false);
+      return;
+    }
+
+    updateGroup.mutate(
+      { name: parsed.data },
+      {
+        onSuccess: () => setIsEditingName(false),
+        onError: () => setSaveError(t("error-update-group-failed")),
+      },
+    );
+  };
+
+  const handleSaveAbout = () => {
+    const parsed = aboutSchema.safeParse(about);
+    if (!parsed.success) {
+      setAboutError(parsed.error.issues[0]?.message);
+      return;
+    }
+
+    setAboutError(undefined);
+    setSaveError(undefined);
+
+    const nextAbout = parsed.data;
+    if (nextAbout === (conversation.about ?? "")) {
+      setIsEditingAbout(false);
+      return;
+    }
+
+    updateGroup.mutate(
+      { about: nextAbout },
+      {
+        onSuccess: () => setIsEditingAbout(false),
+        onError: () => setSaveError(t("error-update-group-failed")),
+      },
+    );
+  };
+
   return (
     <>
-      {/* Mobile backdrop — drawer overlay like the menu sidebar */}
       <button
         type="button"
         aria-label={t("label-close")}
@@ -88,10 +190,8 @@ export default function ConversationInfo({
         aria-hidden={!open}
         className={cn(
           "flex h-full min-h-0 flex-col overflow-hidden bg-surface transform-gpu ease-in-out duration-300",
-          // Mobile: fixed full-screen drawer (like menu bar)
           "max-lg:fixed max-lg:inset-y-0 max-lg:right-0 max-lg:z-40 max-lg:w-full max-lg:shadow-2xl max-lg:transition-transform max-lg:will-change-transform",
           open ? "max-lg:translate-x-0" : "max-lg:translate-x-full",
-          // Desktop: inline column that squeezes the chat
           "lg:relative lg:inset-auto lg:z-auto lg:shrink-0 lg:border-l lg:border-border lg:shadow-none lg:transition-[width] lg:will-change-[width] lg:translate-x-0",
           open ? "lg:w-[min(40%,420px)]" : "lg:w-0 lg:border-l-0",
         )}
@@ -117,12 +217,24 @@ export default function ConversationInfo({
                 shape="circle"
                 className="size-28 text-3xl shadow-lg border-2 border-border"
               />
-              <Typography
-                variant="h2"
-                className="text-center text-xl font-semibold text-foreground"
-              >
-                {displayName}
-              </Typography>
+              {!canEditGroup && (
+                <>
+                  <Typography
+                    variant="h2"
+                    className="text-center text-xl font-semibold text-foreground"
+                  >
+                    {displayName}
+                  </Typography>
+                  {!isDirect && conversation.about && (
+                    <Typography
+                      variant="p"
+                      className="text-center text-sm text-muted"
+                    >
+                      {conversation.about}
+                    </Typography>
+                  )}
+                </>
+              )}
               {!isDirect && (
                 <Typography variant="span" className="text-muted">
                   {t("label-members-count", {
@@ -131,6 +243,105 @@ export default function ConversationInfo({
                 </Typography>
               )}
             </div>
+
+            {canEditGroup && (
+              <div className="flex flex-col gap-5 border-b border-border px-4 py-5">
+                <CustomInput
+                  ref={nameInputRef}
+                  label={t("label-group-name")}
+                  variant="underlined"
+                  value={name}
+                  onChange={(e) => {
+                    setName(e.target.value);
+                    setNameError(undefined);
+                    setSaveError(undefined);
+                  }}
+                  readOnly={!isEditingName}
+                  disabled={isSaving && isEditingName}
+                  onClick={() =>
+                    !isEditingName && !isSaving && setIsEditingName(true)
+                  }
+                  maxLength={GROUP_NAME_MAX}
+                  error={nameError}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && isEditingName && !isSaving) {
+                      handleSaveName();
+                    }
+                  }}
+                  rightContent={
+                    isEditingName ? (
+                      <CustomInput.RightActions
+                        charsLeft={GROUP_NAME_MAX - name.length}
+                        onSave={isSaving ? undefined : handleSaveName}
+                        saveTitle={t("label-save")}
+                      />
+                    ) : (
+                      <ActionIcon
+                        name="pencil"
+                        label={t("label-edit")}
+                        className="size-8 text-muted hover:bg-transparent hover:text-primary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!isSaving) setIsEditingName(true);
+                        }}
+                      />
+                    )
+                  }
+                />
+
+                <CustomInput
+                  ref={aboutInputRef}
+                  label={t("label-group-about")}
+                  variant="underlined"
+                  value={about}
+                  onChange={(e) => {
+                    setAbout(e.target.value);
+                    setAboutError(undefined);
+                    setSaveError(undefined);
+                  }}
+                  readOnly={!isEditingAbout}
+                  disabled={isSaving && isEditingAbout}
+                  onClick={() =>
+                    !isEditingAbout && !isSaving && setIsEditingAbout(true)
+                  }
+                  maxLength={GROUP_ABOUT_MAX}
+                  error={aboutError}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" && isEditingAbout && !isSaving) {
+                      handleSaveAbout();
+                    }
+                  }}
+                  rightContent={
+                    isEditingAbout ? (
+                      <CustomInput.RightActions
+                        charsLeft={GROUP_ABOUT_MAX - about.length}
+                        onSave={isSaving ? undefined : handleSaveAbout}
+                        saveTitle={t("label-save")}
+                      />
+                    ) : (
+                      <ActionIcon
+                        name="pencil"
+                        label={t("label-edit")}
+                        className="size-8 text-muted hover:bg-transparent hover:text-primary"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          if (!isSaving) setIsEditingAbout(true);
+                        }}
+                      />
+                    )
+                  }
+                />
+
+                {saveError && (
+                  <Typography
+                    variant="span"
+                    className="text-destructive text-center"
+                  >
+                    {saveError}
+                  </Typography>
+                )}
+              </div>
+            )}
 
             <div className="flex  items-center justify-center gap-8 border-b border-border px-4 py-5">
               <QuickAction

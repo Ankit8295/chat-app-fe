@@ -6,6 +6,7 @@ export type WsEventType =
   | "pong"
   | "message_send"
   | "message_new"
+  | "group_update"
   | "error";
 
 export type WsEnvelope<T = unknown> = {
@@ -29,6 +30,17 @@ export type WsSendMessagePayload = {
 };
 
 export type WsMessageNewPayload = Message;
+
+export type WsGroupUpdatePayload = {
+  id: string;
+  type: "direct" | "group";
+  name?: string | null;
+  about?: string | null;
+  image?: string | null;
+  createdBy?: string | null;
+  createdAt: string;
+  updatedAt: string;
+};
 
 export type WsConnectionStatus =
   | "idle"
