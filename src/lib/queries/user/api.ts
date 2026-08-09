@@ -1,6 +1,13 @@
 import { API_ROUTES } from "@/lib/api/api-routes";
 import { axiosClient } from "@/lib/api/axios-client";
-import { Friend, PageResponse, User, UserPreference, UserSearchResult } from "./types";
+import {
+  Friend,
+  PageResponse,
+  UpdateUserProfileRequest,
+  User,
+  UserPreference,
+  UserSearchResult,
+} from "./types";
 
 export async function searchUsers(
   search?: string,
@@ -43,6 +50,16 @@ export async function getMe(): Promise<User> {
     return response.data;
   } catch (error) {
     console.error("error fetching profile", error);
+    throw new Error("something went wrong");
+  }
+}
+
+export async function updateMe(payload: UpdateUserProfileRequest): Promise<User> {
+  try {
+    const response = await axiosClient.put<User>(API_ROUTES.users.updateMe, payload);
+    return response.data;
+  } catch (error) {
+    console.error("error updating profile", error);
     throw new Error("something went wrong");
   }
 }

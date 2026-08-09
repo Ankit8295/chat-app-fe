@@ -1,7 +1,13 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useGetMe } from "@/lib/queries/user/query";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { useGetMe, useUpdateMe } from "@/lib/queries/user/query";
+import {
+  createUpdateProfileAboutSchema,
+  createUpdateProfileNameSchema,
+  PROFILE_ABOUT_MAX,
+  PROFILE_NAME_MAX,
+} from "@/lib/queries/user/validations";
 import { useTranslations } from "next-intl";
 import Typography from "@/components/ui/typography/typography";
 import CustomInput from "@/components/ui/inputs/input";
@@ -15,9 +21,16 @@ export default function ProfileTab() {
     isLoading: isProfileLoading,
     error: profileError,
   } = useGetMe();
+  const updateMe = useUpdateMe();
+
+  const nameSchema = useMemo(() => createUpdateProfileNameSchema(t), [t]);
+  const aboutSchema = useMemo(() => createUpdateProfileAboutSchema(t), [t]);
 
   const [name, setName] = useState("");
   const [about, setAbout] = useState("");
+  const [nameError, setNameError] = useState<string>();
+  const [aboutError, setAboutError] = useState<string>();
+  const [saveError, setSaveError] = useState<string>();
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingAbout, setIsEditingAbout] = useState(false);
@@ -43,11 +56,60 @@ export default function ProfileTab() {
   }, [isEditingAbout]);
 
   const handleSaveName = () => {
-    setIsEditingName(false);
+    const parsed = nameSchema.safeParse(name);
+    if (!parsed.success) {
+      setNameError(parsed.error.issues[0]?.message);
+      return;
+    }
+
+    setNameError(undefined);
+    setSaveError(undefined);
+
+    if (parsed.data === currentUser?.name) {
+      setIsEditingName(false);
+      return;
+    }
+
+    updateMe.mutate(
+      { name: parsed.data },
+      {
+        onSuccess: () => {
+          setIsEditingName(false);
+        },
+        onError: () => {
+          setSaveError(t("error-update-profile-failed"));
+        },
+      },
+    );
   };
 
   const handleSaveAbout = () => {
-    setIsEditingAbout(false);
+    const parsed = aboutSchema.safeParse(about);
+    if (!parsed.success) {
+      setAboutError(parsed.error.issues[0]?.message);
+      return;
+    }
+
+    setAboutError(undefined);
+    setSaveError(undefined);
+
+    const nextAbout = parsed.data;
+    if (nextAbout === (currentUser?.about ?? "")) {
+      setIsEditingAbout(false);
+      return;
+    }
+
+    updateMe.mutate(
+      { about: nextAbout },
+      {
+        onSuccess: () => {
+          setIsEditingAbout(false);
+        },
+        onError: () => {
+          setSaveError(t("error-update-profile-failed"));
+        },
+      },
+    );
   };
 
   if (isProfileLoading) {
@@ -72,16 +134,14 @@ export default function ProfileTab() {
     );
   }
 
-  const nameMaxLength = 25;
-  const aboutMaxLength = 100;
-
-  const nameCharsLeft = nameMaxLength - name.length;
-  const aboutCharsLeft = aboutMaxLength - about.length;
+  const nameCharsLeft = PROFILE_NAME_MAX - name.length;
+  const aboutCharsLeft = PROFILE_ABOUT_MAX - about.length;
+  const isSaving = updateMe.isPending;
 
   return (
     <div className="w-full flex flex-col items-center gap-8 max-sm:gap-6 py-2">
       <Avatar
-        src={currentUser?.img}
+        src={currentUser?.image ?? currentUser?.img}
         name={currentUser?.name}
         size="xl"
         shape="circle"
@@ -94,18 +154,24 @@ export default function ProfileTab() {
           label={t("label-about")}
           variant="underlined"
           value={about}
-          onChange={(e) => setAbout(e.target.value)}
+          onChange={(e) => {
+            setAbout(e.target.value);
+            setAboutError(undefined);
+            setSaveError(undefined);
+          }}
           readOnly={!isEditingAbout}
-          onClick={() => !isEditingAbout && setIsEditingAbout(true)}
-          maxLength={aboutMaxLength}
+          disabled={isSaving && isEditingAbout}
+          onClick={() => !isEditingAbout && !isSaving && setIsEditingAbout(true)}
+          maxLength={PROFILE_ABOUT_MAX}
+          error={aboutError}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && isEditingAbout) handleSaveAbout();
+            if (e.key === "Enter" && isEditingAbout && !isSaving) handleSaveAbout();
           }}
           rightContent={
             isEditingAbout ? (
               <CustomInput.RightActions
                 charsLeft={aboutCharsLeft}
-                onSave={handleSaveAbout}
+                onSave={isSaving ? undefined : handleSaveAbout}
                 saveTitle={t("label-save")}
               />
             ) : (
@@ -115,7 +181,7 @@ export default function ProfileTab() {
                 className="size-8 text-muted hover:bg-transparent hover:text-primary"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setIsEditingAbout(true);
+                  if (!isSaving) setIsEditingAbout(true);
                 }}
               />
             )
@@ -127,18 +193,24 @@ export default function ProfileTab() {
           label={t("label-name")}
           variant="underlined"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+            setNameError(undefined);
+            setSaveError(undefined);
+          }}
           readOnly={!isEditingName}
-          onClick={() => !isEditingName && setIsEditingName(true)}
-          maxLength={nameMaxLength}
+          disabled={isSaving && isEditingName}
+          onClick={() => !isEditingName && !isSaving && setIsEditingName(true)}
+          maxLength={PROFILE_NAME_MAX}
+          error={nameError}
           onKeyDown={(e) => {
-            if (e.key === "Enter" && isEditingName) handleSaveName();
+            if (e.key === "Enter" && isEditingName && !isSaving) handleSaveName();
           }}
           rightContent={
             isEditingName ? (
               <CustomInput.RightActions
                 charsLeft={nameCharsLeft}
-                onSave={handleSaveName}
+                onSave={isSaving ? undefined : handleSaveName}
                 saveTitle={t("label-save")}
               />
             ) : (
@@ -148,13 +220,19 @@ export default function ProfileTab() {
                 className="size-8 text-muted hover:bg-transparent hover:text-primary"
                 onClick={(e) => {
                   e.stopPropagation();
-                  setIsEditingName(true);
+                  if (!isSaving) setIsEditingName(true);
                 }}
               />
             )
           }
           helperText={t("label-name-hint")}
         />
+
+        {saveError && (
+          <Typography variant="span" className="text-destructive text-center">
+            {saveError}
+          </Typography>
+        )}
       </div>
     </div>
   );

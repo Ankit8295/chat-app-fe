@@ -34,6 +34,11 @@ export type CreateUserPreferenceRequest = {
   lastConversationId: string | null;
 };
 
+export type UpdateUserProfileRequest = {
+  name?: string;
+  about?: string;
+};
+
 export type PageResponse<T> = {
   content: T[];
   page: number;

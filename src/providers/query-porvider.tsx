@@ -14,6 +14,8 @@ export function QueryProvider({ children }: Props) {
         defaultOptions: {
           queries: {
             retry: 1,
+            refetchOnMount: false,
+            refetchOnWindowFocus: false,
           },
         },
       }),
