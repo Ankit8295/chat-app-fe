@@ -39,6 +39,25 @@ export type UpdateUserProfileRequest = {
   about?: string;
 };
 
+export type AvatarPresignRequest = {
+  contentType: string;
+  fileName: string;
+  sizeBytes: number;
+};
+
+export type ProfilePresignedUrlResponse = {
+  mediaId: string;
+  objectKey: string;
+  uploadUrl: string;
+  method: string;
+  expiresIn: number;
+  headers: Record<string, string>;
+};
+
+export type AvatarConfirmRequest = {
+  mediaId: string;
+};
+
 export type PageResponse<T> = {
   content: T[];
   page: number;

@@ -10,6 +10,8 @@ export const API_ROUTES = {
     getFriends: "/api/v1/users/friends",
     getMe: "/api/v1/users/me",
     updateMe: "/api/v1/users/me",
+    presignAvatar: "/api/v1/users/me/avatar/presign",
+    confirmAvatar: "/api/v1/users/me/avatar/confirm",
     getPreferences: "/api/v1/users/me/preferences",
     setPreferences: "/api/v1/users/me/preferences",
     getFriendById: (userId: string) => `/api/v1/users/${userId}`,

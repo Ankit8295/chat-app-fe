@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useRef, useMemo } from "react";
-import { useGetMe, useUpdateMe } from "@/lib/queries/user/query";
+import { useState, useEffect, useRef, useMemo, type ChangeEvent } from "react";
+import { useGetMe, useUpdateMe, useUploadMyAvatar } from "@/lib/queries/user/query";
 import {
+  createAvatarFileSchema,
   createUpdateProfileAboutSchema,
   createUpdateProfileNameSchema,
   PROFILE_ABOUT_MAX,
@@ -22,21 +23,26 @@ export default function ProfileTab() {
     error: profileError,
   } = useGetMe();
   const updateMe = useUpdateMe();
+  const uploadAvatar = useUploadMyAvatar();
 
   const nameSchema = useMemo(() => createUpdateProfileNameSchema(t), [t]);
   const aboutSchema = useMemo(() => createUpdateProfileAboutSchema(t), [t]);
+  const avatarFileSchema = useMemo(() => createAvatarFileSchema(t), [t]);
 
   const [name, setName] = useState("");
   const [about, setAbout] = useState("");
   const [nameError, setNameError] = useState<string>();
   const [aboutError, setAboutError] = useState<string>();
   const [saveError, setSaveError] = useState<string>();
+  const [avatarError, setAvatarError] = useState<string>();
+  const [avatarPreview, setAvatarPreview] = useState<string>();
 
   const [isEditingName, setIsEditingName] = useState(false);
   const [isEditingAbout, setIsEditingAbout] = useState(false);
 
   const nameInputRef = useRef<HTMLInputElement>(null);
   const aboutInputRef = useRef<HTMLInputElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setName(currentUser?.name ?? "");
@@ -54,6 +60,14 @@ export default function ProfileTab() {
       setTimeout(() => aboutInputRef.current?.focus(), 50);
     }
   }, [isEditingAbout]);
+
+  useEffect(() => {
+    return () => {
+      if (avatarPreview) {
+        URL.revokeObjectURL(avatarPreview);
+      }
+    };
+  }, [avatarPreview]);
 
   const handleSaveName = () => {
     const parsed = nameSchema.safeParse(name);
@@ -112,6 +126,49 @@ export default function ProfileTab() {
     );
   };
 
+  const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) {
+      return;
+    }
+
+    const parsed = avatarFileSchema.safeParse(file);
+    if (!parsed.success) {
+      setAvatarError(parsed.error.issues[0]?.message);
+      return;
+    }
+
+    setAvatarError(undefined);
+    const previewUrl = URL.createObjectURL(file);
+    setAvatarPreview((previous) => {
+      if (previous) {
+        URL.revokeObjectURL(previous);
+      }
+      return previewUrl;
+    });
+
+    uploadAvatar.mutate(file, {
+      onSuccess: () => {
+        setAvatarPreview((previous) => {
+          if (previous) {
+            URL.revokeObjectURL(previous);
+          }
+          return undefined;
+        });
+      },
+      onError: () => {
+        setAvatarError(t("error-avatar-upload-failed"));
+        setAvatarPreview((previous) => {
+          if (previous) {
+            URL.revokeObjectURL(previous);
+          }
+          return undefined;
+        });
+      },
+    });
+  };
+
   if (isProfileLoading) {
     return (
       <div className="flex flex-col items-center justify-center gap-3 py-10 my-auto">
@@ -137,16 +194,49 @@ export default function ProfileTab() {
   const nameCharsLeft = PROFILE_NAME_MAX - name.length;
   const aboutCharsLeft = PROFILE_ABOUT_MAX - about.length;
   const isSaving = updateMe.isPending;
+  const isUploadingAvatar = uploadAvatar.isPending;
+  const avatarSrc =
+    avatarPreview ?? currentUser?.image ?? currentUser?.img ?? undefined;
 
   return (
     <div className="w-full flex flex-col items-center gap-8 max-sm:gap-6 py-2">
-      <Avatar
-        src={currentUser?.image ?? currentUser?.img}
-        name={currentUser?.name}
-        size="xl"
-        shape="circle"
-        className="size-28 max-sm:size-24 text-3xl shadow-lg border-2 border-border"
-      />
+      <div className="flex flex-col items-center gap-2">
+        <div className="relative">
+          <Avatar
+            src={avatarSrc}
+            name={currentUser?.name}
+            size="xl"
+            shape="circle"
+            className="size-28 max-sm:size-24 text-3xl shadow-lg border-2 border-border"
+          />
+          <div className="absolute -right-1 -bottom-1">
+            <ActionIcon
+              name="pencil"
+              variant="solid"
+              label={t("aria-change-profile-image")}
+              disabled={isUploadingAvatar || isSaving}
+              onClick={() => fileInputRef.current?.click()}
+            />
+          </div>
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={handleAvatarChange}
+          />
+        </div>
+        {isUploadingAvatar && (
+          <Typography variant="span" className="text-muted text-sm">
+            {t("label-uploading-avatar")}
+          </Typography>
+        )}
+        {avatarError && (
+          <Typography variant="span" className="text-destructive text-sm text-center">
+            {avatarError}
+          </Typography>
+        )}
+      </div>
 
       <div className="w-full flex flex-col gap-7 max-sm:gap-5">
         <CustomInput

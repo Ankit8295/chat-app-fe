@@ -1,8 +1,11 @@
 import { API_ROUTES } from "@/lib/api/api-routes";
 import { axiosClient } from "@/lib/api/axios-client";
 import {
+  AvatarConfirmRequest,
+  AvatarPresignRequest,
   Friend,
   PageResponse,
+  ProfilePresignedUrlResponse,
   UpdateUserProfileRequest,
   User,
   UserPreference,
@@ -62,6 +65,61 @@ export async function updateMe(payload: UpdateUserProfileRequest): Promise<User>
     console.error("error updating profile", error);
     throw new Error("something went wrong");
   }
+}
+
+export async function presignAvatar(
+  payload: AvatarPresignRequest,
+): Promise<ProfilePresignedUrlResponse> {
+  try {
+    const response = await axiosClient.post<ProfilePresignedUrlResponse>(
+      API_ROUTES.users.presignAvatar,
+      payload,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("error requesting avatar presign", error);
+    throw new Error("something went wrong");
+  }
+}
+
+export async function uploadAvatarToPresignedUrl(
+  uploadUrl: string,
+  file: File,
+  headers: Record<string, string>,
+): Promise<void> {
+  const response = await fetch(uploadUrl, {
+    method: "PUT",
+    body: file,
+    headers,
+  });
+
+  if (!response.ok) {
+    console.error("error uploading avatar to storage", response.status);
+    throw new Error("something went wrong");
+  }
+}
+
+export async function confirmAvatar(payload: AvatarConfirmRequest): Promise<User> {
+  try {
+    const response = await axiosClient.post<User>(
+      API_ROUTES.users.confirmAvatar,
+      payload,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("error confirming avatar upload", error);
+    throw new Error("something went wrong");
+  }
+}
+
+export async function uploadMyAvatar(file: File): Promise<User> {
+  const presign = await presignAvatar({
+    contentType: file.type,
+    fileName: file.name,
+    sizeBytes: file.size,
+  });
+  await uploadAvatarToPresignedUrl(presign.uploadUrl, file, presign.headers);
+  return confirmAvatar({ mediaId: presign.mediaId });
 }
 
 export async function getFriendById(userId: string): Promise<User> {

@@ -161,8 +161,13 @@ const messages = {
   "label-close": "Close",
   "label-loading-profile": "Loading profile...",
   "label-loading-friends": "Loading friends...",
+  "label-uploading-avatar": "Uploading photo...",
+  "aria-change-profile-image": "Change profile photo",
   "error-update-profile-failed": "Failed to update profile. Please try again.",
   "error-update-group-failed": "Failed to update group. Please try again.",
+  "error-avatar-upload-failed": "Failed to upload photo. Please try again.",
+  "error-avatar-invalid-type": "Use a JPEG, PNG, or WebP image.",
+  "error-avatar-too-large": "Image must be 5 MB or smaller.",
 } as const;
 
 export default messages;

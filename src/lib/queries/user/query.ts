@@ -13,6 +13,7 @@ import {
   searchUsers,
   setUserPreferences,
   updateMe,
+  uploadMyAvatar,
 } from "./api";
 import { UpdateUserProfileRequest, User, UserPreference } from "./types";
 
@@ -79,6 +80,17 @@ export function useUpdateMe() {
 
   return useMutation<User, Error, UpdateUserProfileRequest>({
     mutationFn: (payload) => updateMe(payload),
+    onSuccess: (data) => {
+      queryClient.setQueryData([UsersQueryKeys.ME], data);
+    },
+  });
+}
+
+export function useUploadMyAvatar() {
+  const queryClient = useQueryClient();
+
+  return useMutation<User, Error, File>({
+    mutationFn: (file) => uploadMyAvatar(file),
     onSuccess: (data) => {
       queryClient.setQueryData([UsersQueryKeys.ME], data);
     },

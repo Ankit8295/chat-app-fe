@@ -4,6 +4,12 @@ type Translate = (key: string) => string;
 
 export const PROFILE_NAME_MAX = 80;
 export const PROFILE_ABOUT_MAX = 160;
+export const PROFILE_AVATAR_MAX_BYTES = 5 * 1024 * 1024;
+export const PROFILE_AVATAR_CONTENT_TYPES = [
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+] as const;
 
 export const createGroupFormSchema = (t: Translate) =>
   z.object({
@@ -37,3 +43,17 @@ export const createUpdateProfileAboutSchema = (t: Translate) =>
     .string()
     .trim()
     .max(PROFILE_ABOUT_MAX, { error: t("validation-profile-about-max") });
+
+export const createAvatarFileSchema = (t: Translate) =>
+  z
+    .instanceof(File, { error: t("error-avatar-invalid-type") })
+    .refine(
+      (file) =>
+        PROFILE_AVATAR_CONTENT_TYPES.includes(
+          file.type as (typeof PROFILE_AVATAR_CONTENT_TYPES)[number],
+        ),
+      { error: t("error-avatar-invalid-type") },
+    )
+    .refine((file) => file.size <= PROFILE_AVATAR_MAX_BYTES, {
+      error: t("error-avatar-too-large"),
+    });
