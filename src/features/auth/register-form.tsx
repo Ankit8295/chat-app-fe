@@ -1,5 +1,5 @@
 "use client";
-import { ApiFormError, register } from "@/lib/queries/auth/api";
+import { register } from "@/lib/queries/auth/api";
 import {
   createRegisterFormSchema,
   RegisterFormState,
@@ -25,7 +25,7 @@ export default function RegisterForm() {
       router.push("/");
       router.refresh();
     },
-    onError: (error: ApiFormError) => {
+    onError: (error: any) => {
       setState({
         message: error.message,
         errors: error.fieldErrors,

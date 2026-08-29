@@ -2,10 +2,7 @@ import { InfiniteData, QueryClient } from "@tanstack/react-query";
 import { ChatQueryKeys, MessagesQueryKeys } from "@/lib/queries/query-keys";
 import { upsertMessageInCache } from "@/lib/queries/message/cache";
 import { Message, MessagePageResponse } from "@/lib/queries/message/types";
-import {
-  Conversation,
-  ConversationDetail,
-} from "@/lib/queries/chat/types";
+import { Conversation, ConversationDetail } from "@/lib/queries/chat/types";
 import {
   WsEnvelope,
   WsErrorPayload,
@@ -15,7 +12,7 @@ import {
 
 type EnvelopeHandlerContext = {
   queryClient: QueryClient;
-  setLastError: (error: WsErrorPayload | null) => void;
+  setLastError: (error: WsErrorPayload) => void;
 };
 
 type EnvelopeHandler = (
@@ -50,9 +47,9 @@ function handleGroupUpdate(
         conversation.id === updated.id
           ? {
               ...conversation,
-              name: updated.name,
-              about: updated.about,
-              image: updated.image,
+              name: updated.name ?? undefined,
+              about: updated.about ?? undefined,
+              image: updated.image ?? undefined,
               updatedAt: updated.updatedAt,
             }
           : conversation,
@@ -65,9 +62,9 @@ function handleGroupUpdate(
       existing
         ? {
             ...existing,
-            name: updated.name,
-            about: updated.about,
-            image: updated.image,
+            name: updated.name ?? undefined,
+            about: updated.about ?? undefined,
+            image: updated.image ?? undefined,
             updatedAt: updated.updatedAt,
           }
         : existing,

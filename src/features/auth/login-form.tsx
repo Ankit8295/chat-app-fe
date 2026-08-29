@@ -1,5 +1,5 @@
 "use client";
-import { ApiFormError, login } from "@/lib/queries/auth/api";
+import { login } from "@/lib/queries/auth/api";
 import {
   createLoginFormSchema,
   LoginFormState,
@@ -25,7 +25,7 @@ export default function LoginForm() {
       router.push("/");
       router.refresh();
     },
-    onError: (error: ApiFormError) => {
+    onError: (error: any) => {
       setState({
         message: error.message,
         errors: error.fieldErrors,

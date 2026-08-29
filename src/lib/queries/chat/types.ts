@@ -1,10 +1,10 @@
 export type Conversation = {
   id: string;
   type: "direct" | "group";
-  name?: string | null;
-  about?: string | null;
-  image?: string | null;
-  createdBy?: string | null;
+  name?: string;
+  about?: string;
+  image?: string;
+  createdBy?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -12,19 +12,19 @@ export type Conversation = {
 export type ConversationParticipant = {
   id: string;
   name: string;
-  image?: string | null;
+  image?: string;
   joinedAt: string;
 };
 
 export type ConversationDetail = {
   id: string;
   type: "direct" | "group";
-  name?: string | null;
-  about?: string | null;
-  image?: string | null;
+  name?: string;
+  about?: string;
+  image?: string;
   friend: ConversationParticipant | null;
   participants: ConversationParticipant[];
-  createdBy?: string | null;
+  createdBy?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -38,7 +38,7 @@ export type CreateConversationRequest =
       type: "GROUP";
       name: string;
       about?: string;
-      image?: string | null;
+      image?: string;
       participants: string[];
     };
 
