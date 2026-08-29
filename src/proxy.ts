@@ -3,10 +3,19 @@ import { NextRequest, NextResponse } from "next/server";
 const AUTH_COOKIE_NAME = "access_token";
 const publicRoutes = ["/login", "/register"];
 const BACKEND_URL =
-  process.env.NEXT_PUBLIC_BACKEND_API_URL ?? "http://localhost:8080";
+  process.env.NEXT_PUBLIC_BACKEND_API_URL ?? "https://api.ankitdev.in";
+
+function isLocalDevHost(hostname: string) {
+  return hostname === "localhost" || hostname === "127.0.0.1";
+}
 
 export default async function proxy(req: NextRequest) {
   const path = req.nextUrl.pathname;
+
+  if (isLocalDevHost(req.nextUrl.hostname)) {
+    return NextResponse.next();
+  }
+
   const isPublicRoute = publicRoutes.includes(path);
   const token = req.cookies.get(AUTH_COOKIE_NAME)?.value;
   const isAuthenticated = Boolean(token);

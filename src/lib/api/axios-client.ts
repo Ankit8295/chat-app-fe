@@ -3,7 +3,7 @@ import { API_ROUTES } from "@/lib/api/api-routes";
 import { getChatWsClient } from "@/lib/socket/ws-client";
 
 const API_BASE_URL =
-  process.env.NEXT_PUBLIC_BACKEND_API_URL ?? "http://localhost:8080";
+  process.env.NEXT_PUBLIC_BACKEND_API_URL ?? "https://api.ankitdev.in";
 
 type RetryConfig = InternalAxiosRequestConfig & { _retry?: boolean };
 

@@ -7,7 +7,7 @@ import {
 
 type EventHandler = (envelope: WsEnvelope) => void;
 
-const DEFAULT_API_BASE_URL = "http://localhost:8080";
+const DEFAULT_API_BASE_URL = "https://api.ankitdev.in";
 const HEARTBEAT_INTERVAL_MS = 25_000;
 const MIN_RECONNECT_DELAY_MS = 1_000;
 const MAX_RECONNECT_DELAY_MS = 30_000;
