@@ -1,16 +1,21 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import ConversationHeader from "@/components/conversation/conversation-header";
 import ConversationInfo from "@/components/conversation/conversation-info";
+import BlockedComposerBanner from "@/components/conversation/blocked-composer-banner";
 import MessageList from "@/components/conversation/message-list";
 import ConversationNotFound from "@/components/ui/conversation-not-found";
 import MessageComposer from "@/components/ui/message-composer";
 import MessageListSkeleton from "@/components/ui/message-list-skeleton";
 import { useInfiniteMessages } from "@/lib/queries/message/query";
-import { useGetConversation } from "@/lib/queries/chat/query";
-import { useGetMe } from "@/lib/queries/user/query";
+import { useConversationKey, useGetConversation } from "@/lib/queries/chat/query";
+import { useGetMe, useUnblockFriend } from "@/lib/queries/user/query";
 import { useChatSocketContext } from "@/lib/socket/chat-socket-provider";
+import { conversationMemberIds } from "@/lib/crypto/conversation";
+import { encryptPlaintext } from "@/lib/crypto/message";
+import { MAX_PLAINTEXT_CHARS } from "@/lib/crypto/types";
+import { useCrypto } from "@/lib/crypto/crypto-provider";
 import { useParams } from "next/navigation";
 
 export default function ConversationPage() {
@@ -18,16 +23,24 @@ export default function ConversationPage() {
   const id = params?.id ?? "";
   const { data: conversation, isLoading, isError } = useGetConversation(id);
   const { data: me } = useGetMe();
+  const { ready: cryptoReady } = useCrypto();
+  const participantIds = useMemo(
+    () => (conversation ? conversationMemberIds(conversation, me?.id) : []),
+    [conversation, me?.id],
+  );
+  const conversationKey = useConversationKey(id, participantIds);
   const {
     messages,
     isLoading: isMessagesLoading,
     isFetchingNextPage,
     hasNextPage,
     fetchNextPage,
-  } = useInfiniteMessages(id);
+  } = useInfiniteMessages(id, participantIds);
   const { sendMessage, isConnected } = useChatSocketContext();
+  const unblockFriend = useUnblockFriend();
   const [draft, setDraft] = useState("");
   const [isInfoOpen, setIsInfoOpen] = useState(false);
+  const [isSending, setIsSending] = useState(false);
 
   useEffect(() => {
     setIsInfoOpen(false);
@@ -44,12 +57,33 @@ export default function ConversationPage() {
 
   const displayName = conversation?.name ?? conversation?.id ?? "";
   const showMessageSkeleton = isLoading || !conversation || isMessagesLoading;
+  const blockStatus = conversation?.blockStatus ?? "none";
+  const isBlocked = blockStatus === "blocked_by_me" || blockStatus === "blocked_by_peer";
+  const canSend =
+    Boolean(id) &&
+    isConnected &&
+    cryptoReady &&
+    conversationKey.isSuccess &&
+    !isLoading &&
+    !isSending &&
+    !isBlocked;
 
   const handleSend = () => {
     const content = draft.trim();
-    if (!content || !id || !isConnected) return;
-    sendMessage({ conversationId: id, content });
-    setDraft("");
+    if (!content || !canSend) return;
+    setIsSending(true);
+    void encryptPlaintext(id, content)
+      .then((encrypted) => {
+        sendMessage({ conversationId: id, ...encrypted });
+        setDraft("");
+      })
+      .finally(() => setIsSending(false));
+  };
+
+  const handleUnblock = () => {
+    const peerId = conversation?.friend?.id;
+    if (!peerId) return;
+    unblockFriend.mutate(peerId);
   };
 
   return (
@@ -88,12 +122,23 @@ export default function ConversationPage() {
               className="h-10 bg-linear-to-t from-background/80 via-background/40 to-transparent backdrop-blur-[2px]"
             />
             <div className="pointer-events-auto bg-background/55 max-md:p-2 backdrop-blur-xl p-4">
-              <MessageComposer
-                value={draft}
-                onChange={setDraft}
-                disabled={isLoading || !isConnected}
-                onSend={handleSend}
-              />
+              {isBlocked && blockStatus !== "none" ? (
+                <BlockedComposerBanner
+                  variant={blockStatus}
+                  onUnblock={
+                    blockStatus === "blocked_by_me" ? handleUnblock : undefined
+                  }
+                  isUnblocking={unblockFriend.isPending}
+                />
+              ) : (
+                <MessageComposer
+                  value={draft}
+                  onChange={setDraft}
+                  disabled={!canSend}
+                  maxLength={MAX_PLAINTEXT_CHARS}
+                  onSend={handleSend}
+                />
+              )}
             </div>
           </div>
         </div>

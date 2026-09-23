@@ -1,4 +1,4 @@
-import { Message } from "@/lib/queries/message/types";
+import { WireMessage } from "@/lib/queries/message/types";
 
 export type WsEventType =
   | "ready"
@@ -26,10 +26,12 @@ export type WsErrorPayload = {
 
 export type WsSendMessagePayload = {
   conversationId: string;
-  content: string;
+  ciphertext: string;
+  nonce: string;
+  keyVersion: number;
 };
 
-export type WsMessageNewPayload = Message;
+export type WsMessageNewPayload = WireMessage;
 
 export type WsGroupUpdatePayload = {
   id: string;

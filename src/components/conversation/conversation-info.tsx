@@ -13,16 +13,30 @@ import UserListItem from "@/components/ui/user-list-item";
 import ConversationInfoRow from "@/components/conversation/conversation-info-row";
 import AddGroupMembersModal from "@/components/conversation/add-group-members-modal";
 import ViewAllMembersModal from "@/components/conversation/view-all-members-modal";
+import VerifyEncryptionSheet from "@/components/conversation/verify-encryption-sheet";
+import ConfirmDialog from "@/components/ui/confirm-dialog";
 import type { ConversationDetail } from "@/lib/queries/chat/types";
-import { useUpdateGroupConversation } from "@/lib/queries/chat/query";
+import {
+  useDeleteConversation,
+  useUpdateGroupConversation,
+} from "@/lib/queries/chat/query";
 import {
   createUpdateGroupAboutSchema,
   createUpdateGroupNameSchema,
   GROUP_ABOUT_MAX,
   GROUP_NAME_MAX,
 } from "@/lib/queries/chat/validations";
-import { useGetMe } from "@/lib/queries/user/query";
+import {
+  useBlockFriend,
+  useGetMe,
+  useSetUserPreferences,
+  useUnblockFriend,
+} from "@/lib/queries/user/query";
+import { useLayoutStore } from "@/store/store";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "../../../routes.config";
 import BellIcon from "@/icons/bell";
+import BlockIcon from "@/icons/block";
 import ClearIcon from "@/icons/clear";
 import HeartIcon from "@/icons/heart";
 import LockIcon from "@/icons/lock";
@@ -47,8 +61,16 @@ export default function ConversationInfo({
   onClose,
 }: ConversationInfoProps) {
   const t = useTranslations();
+  const router = useRouter();
   const { data: me } = useGetMe();
   const updateGroup = useUpdateGroupConversation(conversation.id);
+  const blockFriend = useBlockFriend();
+  const unblockFriend = useUnblockFriend();
+  const deleteConversation = useDeleteConversation();
+  const { mutate: setUserPreference } = useSetUserPreferences();
+  const setActiveConversationId = useLayoutStore(
+    (state) => state.setActiveConversationId,
+  );
 
   const nameSchema = useMemo(() => createUpdateGroupNameSchema(t), [t]);
   const aboutSchema = useMemo(() => createUpdateGroupAboutSchema(t), [t]);
@@ -56,6 +78,11 @@ export default function ConversationInfo({
   const [muted, setMuted] = useState(false);
   const [isAddMembersOpen, setAddMembersOpen] = useState(false);
   const [isViewAllMembersOpen, setViewAllMembersOpen] = useState(false);
+  const [isVerifyOpen, setVerifyOpen] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<
+    "block" | "unblock" | "delete" | null
+  >(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const [name, setName] = useState("");
   const [about, setAbout] = useState("");
@@ -69,6 +96,8 @@ export default function ConversationInfo({
   const aboutInputRef = useRef<HTMLInputElement>(null);
 
   const isDirect = conversation.type === "direct";
+  const blockStatus = conversation.blockStatus ?? "none";
+  const peerId = conversation.friend?.id;
   const canEditGroup =
     !isDirect && !!me?.id && conversation.createdBy === me.id;
   const displayName = conversation.name ?? conversation.id;
@@ -81,6 +110,10 @@ export default function ConversationInfo({
   );
   const hasMoreParticipants = participantCount > PARTICIPANTS_PREVIEW_LIMIT;
   const isSaving = updateGroup.isPending;
+  const isActionPending =
+    blockFriend.isPending ||
+    unblockFriend.isPending ||
+    deleteConversation.isPending;
 
   useEffect(() => {
     setName(conversation.name ?? "");
@@ -96,6 +129,7 @@ export default function ConversationInfo({
     if (!open) {
       setAddMembersOpen(false);
       setViewAllMembersOpen(false);
+      setVerifyOpen(false);
       setIsEditingName(false);
       setIsEditingAbout(false);
       return;
@@ -103,13 +137,13 @@ export default function ConversationInfo({
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key !== "Escape") return;
-      if (isAddMembersOpen || isViewAllMembersOpen) return;
+      if (isAddMembersOpen || isViewAllMembersOpen || isVerifyOpen) return;
       onClose();
     };
 
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [open, onClose, isAddMembersOpen, isViewAllMembersOpen]);
+  }, [open, onClose, isAddMembersOpen, isViewAllMembersOpen, isVerifyOpen]);
 
   useEffect(() => {
     if (isEditingName) {
@@ -170,6 +204,36 @@ export default function ConversationInfo({
         onError: () => setSaveError(t("error-update-group-failed")),
       },
     );
+  };
+
+  const handleConfirmAction = () => {
+    setActionError(null);
+    if (confirmAction === "block" && peerId) {
+      blockFriend.mutate(peerId, {
+        onSuccess: () => setConfirmAction(null),
+        onError: () => setActionError(t("error-block-failed")),
+      });
+      return;
+    }
+    if (confirmAction === "unblock" && peerId) {
+      unblockFriend.mutate(peerId, {
+        onSuccess: () => setConfirmAction(null),
+        onError: () => setActionError(t("error-unblock-failed")),
+      });
+      return;
+    }
+    if (confirmAction === "delete") {
+      deleteConversation.mutate(conversation.id, {
+        onSuccess: () => {
+          setConfirmAction(null);
+          onClose();
+          setActiveConversationId(null);
+          setUserPreference(null);
+          router.push(ROUTES.HOME);
+        },
+        onError: () => setActionError(t("error-delete-chat-failed")),
+      });
+    }
   };
 
   return (
@@ -400,7 +464,7 @@ export default function ConversationInfo({
                 icon={<LockIcon className="size-5" />}
                 label={t("label-encryption")}
                 description={t("description-encryption")}
-                onClick={() => undefined}
+                onClick={() => setVerifyOpen(true)}
               />
             </div>
 
@@ -463,16 +527,80 @@ export default function ConversationInfo({
                 variant="danger"
                 onClick={() => undefined}
               />
+              {isDirect && blockStatus === "none" && peerId ? (
+                <ConversationInfoRow
+                  icon={<BlockIcon className="size-5" />}
+                  label={t("label-block")}
+                  variant="danger"
+                  onClick={() => {
+                    setActionError(null);
+                    setConfirmAction("block");
+                  }}
+                />
+              ) : null}
+              {isDirect && blockStatus === "blocked_by_me" && peerId ? (
+                <ConversationInfoRow
+                  icon={<BlockIcon className="size-5" />}
+                  label={t("label-unblock")}
+                  onClick={() => {
+                    setActionError(null);
+                    setConfirmAction("unblock");
+                  }}
+                />
+              ) : null}
               <ConversationInfoRow
                 icon={<TrashIcon className="size-5" />}
                 label={t("label-delete-chat")}
                 variant="danger"
-                onClick={() => undefined}
+                onClick={() => {
+                  setActionError(null);
+                  setConfirmAction("delete");
+                }}
               />
             </div>
           </div>
         </div>
       </aside>
+
+      <ConfirmDialog
+        open={confirmAction !== null}
+        title={
+          confirmAction === "block"
+            ? t("label-confirm-block")
+            : confirmAction === "unblock"
+              ? t("label-confirm-unblock")
+              : t("label-confirm-delete-chat")
+        }
+        description={
+          confirmAction === "block"
+            ? t("description-confirm-block")
+            : confirmAction === "unblock"
+              ? t("description-confirm-unblock")
+              : t("description-confirm-delete-chat")
+        }
+        confirmLabel={
+          confirmAction === "block"
+            ? t("label-block")
+            : confirmAction === "unblock"
+              ? t("label-unblock")
+              : t("label-delete-chat")
+        }
+        cancelLabel={t("label-cancel")}
+        isPending={isActionPending}
+        error={actionError}
+        onConfirm={handleConfirmAction}
+        onCancel={() => {
+          if (isActionPending) return;
+          setActionError(null);
+          setConfirmAction(null);
+        }}
+      />
+
+      <VerifyEncryptionSheet
+        conversation={conversation}
+        open={isVerifyOpen}
+        onClose={() => setVerifyOpen(false)}
+      />
 
       {!isDirect && (
         <>

@@ -4,6 +4,7 @@ import {
   createRegisterFormSchema,
   RegisterFormState,
 } from "@/lib/queries/auth/validations";
+import { ensureIdentityKeys } from "@/lib/crypto/identity";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
@@ -20,7 +21,11 @@ export default function RegisterForm() {
   const registerFormSchema = useMemo(() => createRegisterFormSchema(t), [t]);
 
   const registerMutation = useMutation({
-    mutationFn: register,
+    mutationFn: async (payload: { name: string; email: string; password: string }) => {
+      const result = await register(payload);
+      await ensureIdentityKeys(payload.password);
+      return result;
+    },
     onSuccess: () => {
       router.push("/");
       router.refresh();

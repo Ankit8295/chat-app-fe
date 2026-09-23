@@ -1,7 +1,12 @@
 "use client";
 
 import { useState, useEffect, useRef, useMemo, type ChangeEvent } from "react";
-import { useGetMe, useUpdateMe, useUploadMyAvatar } from "@/lib/queries/user/query";
+import {
+  useGetMe,
+  useRemoveMyAvatar,
+  useUpdateMe,
+  useUploadMyAvatar,
+} from "@/lib/queries/user/query";
 import {
   createAvatarFileSchema,
   createUpdateProfileAboutSchema,
@@ -24,6 +29,7 @@ export default function ProfileTab() {
   } = useGetMe();
   const updateMe = useUpdateMe();
   const uploadAvatar = useUploadMyAvatar();
+  const removeAvatar = useRemoveMyAvatar();
 
   const nameSchema = useMemo(() => createUpdateProfileNameSchema(t), [t]);
   const aboutSchema = useMemo(() => createUpdateProfileAboutSchema(t), [t]);
@@ -126,6 +132,21 @@ export default function ProfileTab() {
     );
   };
 
+  const handleRemoveAvatar = () => {
+    setAvatarError(undefined);
+    setAvatarPreview((previous) => {
+      if (previous) {
+        URL.revokeObjectURL(previous);
+      }
+      return undefined;
+    });
+    removeAvatar.mutate(undefined, {
+      onError: () => {
+        setAvatarError(t("error-avatar-remove-failed"));
+      },
+    });
+  };
+
   const handleAvatarChange = (event: ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     event.target.value = "";
@@ -195,8 +216,13 @@ export default function ProfileTab() {
   const aboutCharsLeft = PROFILE_ABOUT_MAX - about.length;
   const isSaving = updateMe.isPending;
   const isUploadingAvatar = uploadAvatar.isPending;
+  const isRemovingAvatar = removeAvatar.isPending;
+  const avatarBusy = isUploadingAvatar || isRemovingAvatar || isSaving;
   const avatarSrc =
     avatarPreview ?? currentUser?.image ?? currentUser?.img ?? undefined;
+  const canRemoveAvatar = Boolean(
+    (currentUser?.image || currentUser?.img) && !avatarPreview,
+  );
 
   return (
     <div className="w-full flex flex-col items-center gap-8 max-sm:gap-6 py-2">
@@ -209,12 +235,23 @@ export default function ProfileTab() {
             shape="circle"
             className="size-28 max-sm:size-24 text-3xl shadow-lg border-2 border-border"
           />
+          {canRemoveAvatar && (
+            <div className="absolute -left-1 -bottom-1">
+              <ActionIcon
+                name="trash"
+                variant="danger"
+                label={t("aria-remove-profile-image")}
+                disabled={avatarBusy}
+                onClick={handleRemoveAvatar}
+              />
+            </div>
+          )}
           <div className="absolute -right-1 -bottom-1">
             <ActionIcon
               name="pencil"
               variant="solid"
               label={t("aria-change-profile-image")}
-              disabled={isUploadingAvatar || isSaving}
+              disabled={avatarBusy}
               onClick={() => fileInputRef.current?.click()}
             />
           </div>
@@ -229,6 +266,11 @@ export default function ProfileTab() {
         {isUploadingAvatar && (
           <Typography variant="span" className="text-muted text-sm">
             {t("label-uploading-avatar")}
+          </Typography>
+        )}
+        {isRemovingAvatar && (
+          <Typography variant="span" className="text-muted text-sm">
+            {t("label-removing-avatar")}
           </Typography>
         )}
         {avatarError && (

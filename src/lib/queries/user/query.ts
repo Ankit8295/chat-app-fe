@@ -10,12 +10,16 @@ import {
   getFriendsOnly,
   getMe,
   getUserPreferences,
+  blockFriend,
+  unblockFriend,
   searchUsers,
   setUserPreferences,
+  removeMyAvatar,
   updateMe,
   uploadMyAvatar,
 } from "./api";
-import { UpdateUserProfileRequest, User, UserPreference } from "./types";
+import { Friend, PageResponse, UpdateUserProfileRequest, User, UserPreference } from "./types";
+import { ChatQueryKeys } from "../query-keys";
 
 export function useInfiniteSearchUsers(search?: string, size = 10) {
   const queryTerm = search?.trim() ?? "";
@@ -36,6 +40,54 @@ export function useInfiniteGetFriendsOnly(size = 10) {
     initialPageParam: 0,
     getNextPageParam: (lastPage) =>
       lastPage.hasMore ? lastPage.page + 1 : undefined,
+  });
+}
+
+export function useBlockFriend() {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, string>({
+    mutationFn: (userId) => blockFriend(userId),
+    onSuccess: (_data, userId) => {
+      queryClient.setQueriesData<{
+        pages: PageResponse<Friend>[];
+        pageParams: number[];
+      }>({ queryKey: [UsersQueryKeys.FRIENDS] }, (existing) => {
+        if (!existing) return existing;
+        const wasPresent = existing.pages.some((page) =>
+          page.content.some((friend) => friend.userId === userId),
+        );
+        return {
+          ...existing,
+          pages: existing.pages.map((page, index) => ({
+            ...page,
+            content: page.content.filter((friend) => friend.userId !== userId),
+            totalElements:
+              wasPresent && index === 0
+                ? Math.max(0, page.totalElements - 1)
+                : page.totalElements,
+          })),
+        };
+      });
+      queryClient.invalidateQueries({ queryKey: [UsersQueryKeys.FRIENDS] });
+      queryClient.invalidateQueries({ queryKey: [UsersQueryKeys.SEARCH_USERS] });
+      queryClient.invalidateQueries({ queryKey: [ChatQueryKeys.CONVERSATION] });
+      queryClient.invalidateQueries({ queryKey: [ChatQueryKeys.CONVERSATIONS] });
+    },
+  });
+}
+
+export function useUnblockFriend() {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, string>({
+    mutationFn: (userId) => unblockFriend(userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: [UsersQueryKeys.FRIENDS] });
+      queryClient.invalidateQueries({ queryKey: [UsersQueryKeys.SEARCH_USERS] });
+      queryClient.invalidateQueries({ queryKey: [ChatQueryKeys.CONVERSATION] });
+      queryClient.invalidateQueries({ queryKey: [ChatQueryKeys.CONVERSATIONS] });
+    },
   });
 }
 
@@ -91,6 +143,17 @@ export function useUploadMyAvatar() {
 
   return useMutation<User, Error, File>({
     mutationFn: (file) => uploadMyAvatar(file),
+    onSuccess: (data) => {
+      queryClient.setQueryData([UsersQueryKeys.ME], data);
+    },
+  });
+}
+
+export function useRemoveMyAvatar() {
+  const queryClient = useQueryClient();
+
+  return useMutation<User, Error, void>({
+    mutationFn: () => removeMyAvatar(),
     onSuccess: (data) => {
       queryClient.setQueryData([UsersQueryKeys.ME], data);
     },

@@ -8,6 +8,7 @@ import MobileHeader from "@/components/layout/mobile-header";
 import { useLayoutStore } from "@/store/store";
 import { useGetMe, useGetUserPreferences } from "@/lib/queries/user/query";
 import { ChatSocketProvider } from "@/lib/socket/chat-socket-provider";
+import { CryptoProvider } from "@/lib/crypto/crypto-provider";
 import { cn } from "../../cn.config";
 import { type ReactNode } from "react";
 import { usePathname } from "next/navigation";
@@ -26,7 +27,8 @@ export default function ChatLayout({ children }: Props) {
   useGetUserPreferences();
 
   return (
-    <ChatSocketProvider>
+    <CryptoProvider>
+      <ChatSocketProvider>
       <div className="flex h-screen w-full overflow-hidden relative">
         <aside
           className={cn(
@@ -50,6 +52,7 @@ export default function ChatLayout({ children }: Props) {
         <NewGroupModal />
         <SettingsModal />
       </div>
-    </ChatSocketProvider>
+      </ChatSocketProvider>
+    </CryptoProvider>
   );
 }

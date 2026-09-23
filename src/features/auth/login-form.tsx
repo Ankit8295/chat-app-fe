@@ -4,6 +4,7 @@ import {
   createLoginFormSchema,
   LoginFormState,
 } from "@/lib/queries/auth/validations";
+import { ensureIdentityKeys } from "@/lib/crypto/identity";
 import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { FormEvent, useMemo, useState } from "react";
@@ -20,7 +21,11 @@ export default function LoginForm() {
   const loginFormSchema = useMemo(() => createLoginFormSchema(t), [t]);
 
   const loginMutation = useMutation({
-    mutationFn: login,
+    mutationFn: async (payload: { email: string; password: string }) => {
+      const result = await login(payload);
+      await ensureIdentityKeys(payload.password);
+      return result;
+    },
     onSuccess: () => {
       router.push("/");
       router.refresh();

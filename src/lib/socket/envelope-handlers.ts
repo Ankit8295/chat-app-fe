@@ -1,13 +1,13 @@
 import { InfiniteData, QueryClient } from "@tanstack/react-query";
 import { ChatQueryKeys, MessagesQueryKeys } from "@/lib/queries/query-keys";
 import { upsertMessageInCache } from "@/lib/queries/message/cache";
-import { Message, MessagePageResponse } from "@/lib/queries/message/types";
+import { Message, MessagePageResponse, WireMessage } from "@/lib/queries/message/types";
 import { Conversation, ConversationDetail } from "@/lib/queries/chat/types";
+import { decryptWireMessage } from "@/lib/crypto/message";
 import {
   WsEnvelope,
   WsErrorPayload,
   WsGroupUpdatePayload,
-  WsMessageNewPayload,
 } from "./types";
 
 type EnvelopeHandlerContext = {
@@ -24,13 +24,15 @@ function handleMessageNew(
   payload: unknown,
   { queryClient }: EnvelopeHandlerContext,
 ) {
-  const message = payload as WsMessageNewPayload;
+  const message = payload as WireMessage;
   if (!message?.id || !message.conversationId) return;
 
-  queryClient.setQueryData<InfiniteData<MessagePageResponse>>(
-    [MessagesQueryKeys.MESSAGES, message.conversationId],
-    (current) => upsertMessageInCache(current, message as Message),
-  );
+  void decryptWireMessage(message).then((decrypted: Message) => {
+    queryClient.setQueryData<InfiniteData<MessagePageResponse>>(
+      [MessagesQueryKeys.MESSAGES, message.conversationId],
+      (current) => upsertMessageInCache(current, decrypted),
+    );
+  });
 }
 
 function handleGroupUpdate(

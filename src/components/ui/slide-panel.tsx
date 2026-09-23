@@ -21,6 +21,8 @@ const sizeClasses = {
   lg: "max-lg:max-w-none lg:max-w-xl",
 } as const;
 
+const EXIT_MS = 300;
+
 export default function SlidePanel({
   open,
   onClose,
@@ -32,10 +34,30 @@ export default function SlidePanel({
 }: SlidePanelProps) {
   const t = useTranslations();
   const [mounted, setMounted] = useState(false);
+  const [rendered, setRendered] = useState(false);
+  const [entered, setEntered] = useState(false);
 
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (open) {
+      setRendered(true);
+      let inner = 0;
+      const outer = requestAnimationFrame(() => {
+        inner = requestAnimationFrame(() => setEntered(true));
+      });
+      return () => {
+        cancelAnimationFrame(outer);
+        cancelAnimationFrame(inner);
+      };
+    }
+
+    setEntered(false);
+    const timeout = window.setTimeout(() => setRendered(false), EXIT_MS);
+    return () => window.clearTimeout(timeout);
+  }, [open]);
 
   useEffect(() => {
     if (!open) return;
@@ -48,7 +70,9 @@ export default function SlidePanel({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [open, onClose]);
 
-  if (!mounted) return null;
+  if (!mounted || !rendered) return null;
+
+  const visible = open && entered;
 
   return createPortal(
     <>
@@ -57,9 +81,9 @@ export default function SlidePanel({
         aria-label={t("label-close")}
         onClick={onClose}
         className={cn(
-          "fixed inset-0 z-50 bg-black/40 backdrop-blur-[1px] transition-opacity duration-300",
-          open
-            ? "opacity-100 pointer-events-auto"
+          "fixed inset-0 z-50 bg-black/40 transition-opacity duration-300",
+          visible
+            ? "opacity-100 pointer-events-auto backdrop-blur-[1px]"
             : "opacity-0 pointer-events-none",
         )}
       />
@@ -67,13 +91,13 @@ export default function SlidePanel({
       <aside
         role="dialog"
         aria-modal="true"
-        aria-hidden={!open}
+        aria-hidden={!visible}
         className={cn(
-          "fixed inset-y-0 right-0 z-50 flex w-full flex-col overflow-hidden bg-surface shadow-2xl",
+          "fixed inset-y-0 right-0 z-50 flex w-full flex-col overflow-hidden bg-surface",
           "transform-gpu transition-transform duration-300 ease-in-out will-change-transform",
           "max-lg:border-l-0 lg:border-l lg:border-border",
           sizeClasses[size],
-          open ? "translate-x-0" : "translate-x-full",
+          visible ? "translate-x-0 shadow-2xl" : "translate-x-full shadow-none",
           className,
         )}
       >

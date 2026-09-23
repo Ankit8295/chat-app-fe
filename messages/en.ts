@@ -33,8 +33,6 @@ const messages = {
   "error-authentication-failed": "Authentication failed. Please try again.",
   "error-fetch-users-failed": "Failed to load users. Please try again.",
   "error-fetch-user-failed": "Failed to load user. Please try again.",
-  "error-fetch-friends-failed":
-    "Failed to load friends list. Please try again.",
 
   // Users, Friends & Conversations
   "label-new-chat": "New chat",
@@ -70,10 +68,8 @@ const messages = {
   "label-results": "Results",
   "label-page-loaded": "Page {page} loaded",
   "label-loading-more-users": "Loading more users...",
-  "label-loading-more-friends": "Loading more friends...",
   "label-scroll-for-more": "Scroll down for more...",
   "label-end-of-results": "Reached end of results",
-  "label-end-of-friends": "Reached end of friends list",
   "label-conversation": "Conversation",
   "label-online": "Online",
   "label-no-conversation-selected": "Select a conversation",
@@ -107,6 +103,21 @@ const messages = {
   "label-encryption": "Encryption",
   "description-encryption":
     "Messages are end-to-end encrypted. Click to verify.",
+  "label-verify-encryption": "Verify encryption",
+  "description-verify-encryption":
+    "Compare this safety number with {name} using a trusted channel. If it matches, the chat is secure.",
+  "description-verify-encryption-group":
+    "Compare each member's safety number using a trusted channel. If a number matches, that person is who they claim to be.",
+  "error-safety-number-unavailable": "Safety number is not available yet.",
+  "error-decrypt-message": "This message could not be decrypted.",
+  "error-identity-unlock-failed":
+    "Could not unlock your encryption keys. Try signing in again.",
+  "error-identity-setup-failed":
+    "Could not set up encryption keys. Please try again.",
+  "error-missing-public-keys":
+    "Someone in this chat has not set up encryption yet.",
+  "error-conversation-key-unavailable":
+    "Encryption keys for this chat are not ready yet.",
   "label-groups-in-common": "{count} groups in common",
   "label-no-groups-in-common": "No groups in common",
   "label-participants": "Participants",
@@ -144,13 +155,26 @@ const messages = {
 
   // Settings
   "label-settings": "Settings",
-  "description-settings-modal":
-    "Customize your profile settings and manage friends.",
+  "description-settings-modal": "Customize your profile settings.",
   "label-profile": "Profile",
-  "label-manage-friends": "Manage Friends",
   "label-remove": "Remove",
   "label-block": "Block",
-  "label-no-friends": "No friends found.",
+  "label-unblock": "Unblock",
+  "label-cancel": "Cancel",
+  "label-confirm-block": "Block contact?",
+  "description-confirm-block":
+    "Neither of you can send messages. Existing chats are kept.",
+  "label-confirm-unblock": "Unblock contact?",
+  "description-confirm-unblock":
+    "You will be able to message each other again.",
+  "label-confirm-delete-chat": "Delete chat?",
+  "description-confirm-delete-chat":
+    "This chat will be removed from your list. Messages are kept for the other person.",
+  "label-blocked-by-me": "You blocked this contact",
+  "label-blocked-by-peer": "You can't message this contact",
+  "error-block-failed": "Failed to block contact. Please try again.",
+  "error-unblock-failed": "Failed to unblock contact. Please try again.",
+  "error-delete-chat-failed": "Failed to delete chat. Please try again.",
   "label-profile-details": "Profile Details",
   "label-name": "Name",
   "label-about": "About",
@@ -160,12 +184,14 @@ const messages = {
     "This is not your username or pin. This name will be visible to your friends.",
   "label-close": "Close",
   "label-loading-profile": "Loading profile...",
-  "label-loading-friends": "Loading friends...",
   "label-uploading-avatar": "Uploading photo...",
   "aria-change-profile-image": "Change profile photo",
+  "aria-remove-profile-image": "Remove profile photo",
+  "label-removing-avatar": "Removing photo...",
   "error-update-profile-failed": "Failed to update profile. Please try again.",
   "error-update-group-failed": "Failed to update group. Please try again.",
   "error-avatar-upload-failed": "Failed to upload photo. Please try again.",
+  "error-avatar-remove-failed": "Failed to remove photo. Please try again.",
   "error-avatar-invalid-type": "Use a JPEG, PNG, or WebP image.",
   "error-avatar-too-large": "Image must be 5 MB or smaller.",
 } as const;

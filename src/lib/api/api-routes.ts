@@ -8,12 +8,19 @@ export const API_ROUTES = {
   users: {
     searchUsers: "/api/v1/users",
     getFriends: "/api/v1/users/friends",
+    removeFriend: (userId: string) => `/api/v1/users/friends/${userId}`,
+    blockFriend: (userId: string) => `/api/v1/users/friends/${userId}/block`,
+    unblockFriend: (userId: string) => `/api/v1/users/friends/${userId}/block`,
     getMe: "/api/v1/users/me",
     updateMe: "/api/v1/users/me",
     presignAvatar: "/api/v1/users/me/avatar/presign",
     confirmAvatar: "/api/v1/users/me/avatar/confirm",
+    removeAvatar: "/api/v1/users/me/avatar",
     getPreferences: "/api/v1/users/me/preferences",
     setPreferences: "/api/v1/users/me/preferences",
+    getMyCrypto: "/api/v1/users/me/crypto",
+    putMyCrypto: "/api/v1/users/me/crypto",
+    getPublicCrypto: "/api/v1/users/crypto",
     getFriendById: (userId: string) => `/api/v1/users/${userId}`,
   },
   conversations: {
@@ -23,6 +30,12 @@ export const API_ROUTES = {
     createConversation: "/api/v1/conversations",
     updateConversation: (conversationId: string) =>
       `/api/v1/conversations/${conversationId}`,
+    deleteConversation: (conversationId: string) =>
+      `/api/v1/conversations/${conversationId}`,
+    getConversationKeys: (conversationId: string) =>
+      `/api/v1/conversations/${conversationId}/keys`,
+    putConversationKeys: (conversationId: string) =>
+      `/api/v1/conversations/${conversationId}/keys`,
     getMessages: (conversationId: string) =>
       `/api/v1/conversations/${conversationId}/messages`,
   },

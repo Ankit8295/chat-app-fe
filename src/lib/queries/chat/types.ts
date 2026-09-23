@@ -27,12 +27,35 @@ export type ConversationDetail = {
   createdBy?: string;
   createdAt: string;
   updatedAt: string;
+  blockStatus?: "none" | "blocked_by_me" | "blocked_by_peer";
+};
+
+export type KeyEnvelope = {
+  userId: string;
+  wrappedKey: string;
+  wrapNonce: string;
+  ephPublicKey: string;
+};
+
+export type ConversationKeyEnvelope = KeyEnvelope & {
+  keyVersion: number;
+};
+
+export type ConversationKeysResponse = {
+  envelopes: ConversationKeyEnvelope[];
+};
+
+export type PutConversationKeysRequest = {
+  keyVersion: number;
+  envelopes: KeyEnvelope[];
 };
 
 export type CreateConversationRequest =
   | {
       type: "DIRECT";
       userId: string;
+      keyVersion?: number;
+      envelopes?: KeyEnvelope[];
     }
   | {
       type: "GROUP";
@@ -40,6 +63,8 @@ export type CreateConversationRequest =
       about?: string;
       image?: string;
       participants: string[];
+      keyVersion?: number;
+      envelopes?: KeyEnvelope[];
     };
 
 export type UpdateGroupConversationRequest = {

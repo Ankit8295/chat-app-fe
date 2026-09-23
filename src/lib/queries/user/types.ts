@@ -58,6 +58,30 @@ export type AvatarConfirmRequest = {
   mediaId: string;
 };
 
+export type OwnIdentityKey = {
+  userId: string;
+  publicKey: string;
+  wrappedPrivateKey: string;
+  wrapNonce: string;
+  kdfSalt: string;
+  kdfIterations: number;
+  algorithm: string;
+};
+
+export type PublicIdentityKey = {
+  userId: string;
+  publicKey: string;
+};
+
+export type UpsertIdentityKeyRequest = {
+  publicKey: string;
+  wrappedPrivateKey: string;
+  wrapNonce: string;
+  kdfSalt: string;
+  kdfIterations: number;
+  algorithm: string;
+};
+
 export type PageResponse<T> = {
   content: T[];
   page: number;

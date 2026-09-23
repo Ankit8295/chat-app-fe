@@ -9,6 +9,7 @@ const nextConfig: NextConfig = {
   turbopack: {
     root: projectRoot,
   },
+  devIndicators: false,
 };
 
 const withNextIntl = createNextIntlPlugin("./src/i18n/request.ts");

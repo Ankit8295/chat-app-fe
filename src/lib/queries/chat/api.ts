@@ -1,6 +1,6 @@
 import { API_ROUTES } from "@/lib/api/api-routes";
 import { axiosClient } from "@/lib/api/axios-client";
-import { Conversation, ConversationDetail, CreateConversationRequest, UpdateGroupConversationRequest } from "./types";
+import { Conversation, ConversationDetail, ConversationKeysResponse, CreateConversationRequest, PutConversationKeysRequest, UpdateGroupConversationRequest } from "./types";
 
 export async function getConversations(): Promise<Conversation[]> {
   try {
@@ -54,5 +54,46 @@ export async function updateGroupConversation(
   } catch (error) {
     console.error("error updating conversation", error);
     throw new Error("Failed to update conversation");
+  }
+}
+
+export async function deleteConversation(conversationId: string): Promise<void> {
+  try {
+    await axiosClient.delete(
+      API_ROUTES.conversations.deleteConversation(conversationId),
+    );
+  } catch (error) {
+    console.error("error deleting conversation", error);
+    throw new Error("Failed to delete conversation");
+  }
+}
+
+export async function getConversationKeys(
+  conversationId: string,
+): Promise<ConversationKeysResponse> {
+  try {
+    const response = await axiosClient.get<ConversationKeysResponse>(
+      API_ROUTES.conversations.getConversationKeys(conversationId),
+    );
+    return response.data;
+  } catch (error) {
+    console.error("error fetching conversation keys", error);
+    throw new Error("Failed to fetch conversation keys");
+  }
+}
+
+export async function putConversationKeys(
+  conversationId: string,
+  request: PutConversationKeysRequest,
+): Promise<ConversationKeysResponse> {
+  try {
+    const response = await axiosClient.put<ConversationKeysResponse>(
+      API_ROUTES.conversations.putConversationKeys(conversationId),
+      request,
+    );
+    return response.data;
+  } catch (error) {
+    console.error("error saving conversation keys", error);
+    throw new Error("Failed to save conversation keys");
   }
 }

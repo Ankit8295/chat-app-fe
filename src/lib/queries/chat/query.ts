@@ -1,7 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { ChatQueryKeys, UsersQueryKeys } from "../query-keys";
+import { attachConversationEnvelopes, ensureConversationKey } from "@/lib/crypto/conversation";
+import { useCrypto } from "@/lib/crypto/crypto-provider";
 import {
   createConversation,
+  deleteConversation,
   getConversationById,
   getConversations,
   updateGroupConversation,
@@ -31,11 +34,25 @@ export function useGetConversation(conversationId: string) {
   });
 }
 
+export function useConversationKey(conversationId: string, participantIds: string[]) {
+  const { ready } = useCrypto();
+  return useQuery({
+    queryKey: [ChatQueryKeys.CONVERSATION_KEY, conversationId],
+    queryFn: () => ensureConversationKey(conversationId, participantIds),
+    enabled: ready && !!conversationId && participantIds.length > 0,
+    staleTime: Infinity,
+    retry: false,
+  });
+}
+
 export function useCreateConversation() {
   const queryClient = useQueryClient();
 
   return useMutation<Conversation, Error, CreateConversationRequest>({
-    mutationFn: (request) => createConversation(request),
+    mutationFn: async (request) => {
+      const withEnvelopes = await attachConversationEnvelopes(request);
+      return createConversation(withEnvelopes);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: [ChatQueryKeys.CONVERSATIONS] });
       // known FE seam: creating a DIRECT conversation also mutates friendships (User domain)
@@ -83,6 +100,24 @@ export function useUpdateGroupConversation(conversationId: string) {
               }
             : existing,
       );
+    },
+  });
+}
+
+export function useDeleteConversation() {
+  const queryClient = useQueryClient();
+
+  return useMutation<void, Error, string>({
+    mutationFn: (conversationId) => deleteConversation(conversationId),
+    onSuccess: (_data, conversationId) => {
+      queryClient.setQueryData<Conversation[]>(
+        [ChatQueryKeys.CONVERSATIONS],
+        (existing) => existing?.filter((c) => c.id !== conversationId),
+      );
+      queryClient.removeQueries({
+        queryKey: [ChatQueryKeys.CONVERSATION, conversationId],
+      });
+      queryClient.invalidateQueries({ queryKey: [ChatQueryKeys.CONVERSATIONS] });
     },
   });
 }

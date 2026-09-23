@@ -2,6 +2,8 @@
 
 import React, { ReactNode } from "react";
 import * as RadixAvatar from "@radix-ui/react-avatar";
+import { Blobatar } from "@blobatar/react";
+import "blobatar/motion.css";
 import { cn } from "../../../../cn.config";
 import { getInitials } from "@/utils/string";
 
@@ -48,7 +50,7 @@ export function Avatar({
   fallbackClassName,
 }: AvatarProps) {
   const initials = name ? getInitials(name) : "";
-
+  const blobatarName = !src && name ? name : undefined;
   return (
     <span className="relative inline-flex shrink-0">
       <RadixAvatar.Root
@@ -62,25 +64,35 @@ export function Avatar({
           className,
         )}
       >
-        {src ? (
+        {src?.length ? (
           <RadixAvatar.Image
             src={src}
             alt={name || "Avatar"}
             className={cn("size-full object-cover", imageClassName)}
           />
+        ) : blobatarName ? (
+          <Blobatar
+            name={blobatarName}
+            title={blobatarName}
+            animate="hover"
+            background={shape === "circle" ? "circle" : "squircle"}
+            className={cn("size-full", imageClassName)}
+          />
         ) : null}
 
-        <RadixAvatar.Fallback
-          className={cn(
-            "flex size-full items-center justify-center bg-secondary font-semibold transition-colors duration-200",
-            isActive
-              ? "text-primary"
-              : "text-foreground group-hover:text-primary",
-            fallbackClassName,
-          )}
-        >
-          {fallback ?? icon ?? initials ?? "?"}
-        </RadixAvatar.Fallback>
+        {!blobatarName && (
+          <RadixAvatar.Fallback
+            className={cn(
+              "flex size-full items-center justify-center bg-secondary font-semibold transition-colors duration-200",
+              isActive
+                ? "text-primary"
+                : "text-foreground group-hover:text-primary",
+              fallbackClassName,
+            )}
+          >
+            {fallback ?? icon ?? initials ?? "?"}
+          </RadixAvatar.Fallback>
+        )}
       </RadixAvatar.Root>
 
       {isOnline && (

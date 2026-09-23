@@ -1,5 +1,6 @@
 "use client";
 
+import { useTranslations } from "next-intl";
 import Avatar from "@/components/ui/avatar/avatar";
 import Typography from "@/components/ui/typography/typography";
 import { Message } from "@/lib/queries/message/types";
@@ -27,7 +28,9 @@ export default function MessageBubble({
   group,
   showSenderName = false,
 }: MessageBubbleProps) {
+  const t = useTranslations();
   const showAvatar = !isOutgoing && group === "single";
+  const body = message.decryptFailed ? t("error-decrypt-message") : message.content;
 
   if (isOutgoing) {
     return (
@@ -40,9 +43,12 @@ export default function MessageBubble({
         <div className="max-w-[80%] rounded-xl rounded-tr-xs bg-primary/20 px-2 py-1">
           <Typography
             variant="p"
-            className="whitespace-pre-wrap wrap-break-word text-sm font-medium text-foreground"
+            className={cn(
+              "whitespace-pre-wrap wrap-break-word text-sm font-medium",
+              message.decryptFailed ? "italic text-muted" : "text-foreground",
+            )}
           >
-            {message.content}
+            {body}
           </Typography>
           <Typography
             variant="span"
@@ -84,9 +90,12 @@ export default function MessageBubble({
         )}
         <Typography
           variant="p"
-          className="whitespace-pre-wrap wrap-break-word text-sm font-medium text-foreground"
+          className={cn(
+            "whitespace-pre-wrap wrap-break-word text-sm font-medium",
+            message.decryptFailed ? "italic text-muted" : "text-foreground",
+          )}
         >
-          {message.content}
+          {body}
         </Typography>
         <Typography
           variant="span"

@@ -63,7 +63,7 @@ const Button = forwardRef<HTMLButtonElement, CustomButtonProps>(function Button(
               textColorClasses[color],
             )
           : cn(
-              "horizontal-center gap-1 rounded-lg border-2 px-3 py-2 font-semibold transition-transform hover:opacity-95 active:scale-98",
+              "horizontal-center gap-1 rounded-lg border px-3 py-2 font-semibold transition-transform hover:opacity-95 active:scale-98",
               fullWidth ? "w-full" : "w-fit",
               "disabled:border-disable-bg disabled:bg-disable-bg disabled:text-disable-text",
               variant === "bordered"
@@ -76,7 +76,7 @@ const Button = forwardRef<HTMLButtonElement, CustomButtonProps>(function Button(
       {...rest}
     >
       {disabled && !isText && (
-        <div className="h-4 w-4 animate-spin rounded-full border-2 border-current/50 border-t-current" />
+        <div className="h-4 w-4 animate-spin rounded-full border border-current/50 border-t-current" />
       )}
       {leftContent}
       {children}

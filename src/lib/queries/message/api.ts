@@ -1,13 +1,13 @@
 import { API_ROUTES } from "@/lib/api/api-routes";
 import { axiosClient } from "@/lib/api/axios-client";
-import { GetMessagesParams, MessagePageResponse } from "./types";
+import { GetMessagesParams, WireMessagePageResponse } from "./types";
 
 export async function getMessages(
   conversationId: string,
   params: GetMessagesParams = {},
-): Promise<MessagePageResponse> {
+): Promise<WireMessagePageResponse> {
   try {
-    const response = await axiosClient.get<MessagePageResponse>(
+    const response = await axiosClient.get<WireMessagePageResponse>(
       API_ROUTES.conversations.getMessages(conversationId),
       {
         params: {
